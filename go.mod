@@ -1,6 +1,6 @@
-module github.com/fbaube/orderednodes
+module github.com/fbaube/nork
 
-go 1.24.0
+go 1.26.0
 
 require (
 	github.com/fbaube/fileutils v0.0.0-20251130113018-ca967415a31e
