@@ -167,8 +167,9 @@ type Cnty struct {
 */
 }
 
-// RootNork is defined, so that assignments
-// to/from a root node have to be explicit.
+// RootNork had been defined, so that assignments
+// to/from a root node had to be explicit. But it
+// introduces too much complexity. 
 // type RootNork[D any] Nork[D any]
 
 // Root walks the tree upward until [IsRoot] is true,
