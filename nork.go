@@ -9,6 +9,7 @@
 package nork
 
 import(
+	FU "github.com/fbaube/fileutils"
 )
 
 // StringFunc is used by interface Norker, so a 
@@ -66,26 +67,24 @@ type StringFunc func(Norker) string
 //  - The field Prnt is for a "Parent" singleton of some type (whenever
 //    applicable).
 //  - The fields Tags and Vers are used pretty much the same in all UC's.
-//  - UC.F: File System Item: represent a dir-or-file-or-softlink:
-//    	    Here ordering is less important.
-//          Prnt:dir, Kids:contents(!dir-v-file), Usrs:incoming-symlinks 
-//  - UC.C: CMS Usage: Table of Contents line item (transclusion in CMS)
-//    	    This should be an ideal use case. 
-//          Prnt:?TBD, Kids:sub-ToC's/outgoing-refs, Usrs:inrefs+transcluders
-//  - UC.X: XML text: tag/element in markup (XML, or other w AST)
-//    	    This has complexity handling same-named siblings, such as
-//	    multiple <p> tags. 
-//          Prnt:parent-elm(or root's file), Kids:kid-elms, Usrs:?entity-stuff
-//  - UC.G: GolangAST: Go code AST node (https://pkg.go.dev/go/ast#Node)
+//  - UC.FSI: File System Item: represent a dir-or-file-or-softlink:
+//    	      Here ordering is less important. Paths are valid FS paths. 
+//            Prnt:dir, Kids:contents(!dir-v-file), Usrs:incoming-symlinks 
+//  - UC.CMS: CMS Usage: Table of Contents line item (transclusion in CMS)
+//    	      This should be an ideal use case. 
+//            Prnt:?TBD, Kids:sub-ToC's/outrefs, Usrs:inrefs+transcluders
+//  - UC.XML: XML text: tag/element in markup (XML, or other w AST)
+//    	      This has complexity handling same-named siblings, such as
+//	      multiple <p> tags. Paths are tricky (mult. same tags).
+//            Prnt:parent-elm(or file @root), Kids:kid-elms, Usrs:?entity-stuf
+//  - UC.GST: GolangAST: Go code AST node (https://pkg.go.dev/go/ast#Node)
 //          Pnt:node(or root's file), Kids:AST, Usrs:callers/refs
 //
-// Note that using `*Nork[D]` everywhere might not work out,
-// because the fields may end up being quite different from each other.
-//
 // Note that UUID might take on outsized importance, because it might be
-// used to reference all manner of other DB tables and data structures.
-// It may become necessary to add prefixes to UUIDs to specify the DB
-// tables of targets.
+// used to reference all manner of other DB tables and data structures
+// and external (to the system) targets. 
+// It may become necessary to add prefixes to UUIDs to specify (e.g.) 
+// the DB tables of targets.
 //
 // Also there are two distinct memory management nodes for allocating and
 // linking nodes:
@@ -171,12 +170,10 @@ type Nork struct {
 //   CHARACTERISTICS
 //    (FS-ORIENTED)
 //  =================
-    // isDir might be undefined for non-FS use cases; it can be more
-    // generally defined as "canKids", i.e. is able to have kid nodes.
-    isDir bool
-    // isDirlike also includes symlinks (and other edge cases ?)
-    // but should be considered TBD for anything but filesystem. 
-    isDirlike bool
+    // FPs includes flags IsDir, IsDirlike, DoesNotExist.
+    // For non-FS use case, IsDir() might be sorta "CanKids". 
+    // IsDirlike should be considered TBD for anything but FS.
+    FPs FU.Filepaths 
     // level starts at 0 for root, and isRoot() is (level == 0)
     // (For isRoot() we don't also/alternatively test on whether 
     // Prnt is nil, because we might find other uses for Prnt,
@@ -204,14 +201,14 @@ type Nork struct {
     // tory tree imported in a single batch.) The last element of 
     // the relFP is this Nork's own name/label, analagous to
     // FP.Base(Path).
-    relPath string 
+//  relPath string 
     // absPath is use case -specific, but often absolute filepath.
     // Discussion: It is the same as path, except that it is rooted 
     // in - i.e. it is traced back to the root of - a local file
     // system (or documwnt). For a file or dir in a filesystem,
     // it is rooted at the filesystem root. For a markup node
     // or a map/ToC file, it is rooted at the document start.
-    absPath string 
+//  absPath string 
 //  =================
 //    NODE IDENTITY,
 //   USAGE, USE CASE 
@@ -220,13 +217,13 @@ type Nork struct {
     UC    string // QuadraMode // UC selector 
 }
 
-func (p *Nork) IsDir() bool  { return p.isDir }
+func (p *Nork) IsDir() bool  { return p.IsDir() }
 func (p *Nork) Level()  int  { return p.level }
 func (p *Nork) IsRoot() bool { return p.level == 0 }
-func (p *Nork) IsDirlike() bool { return p.isDirlike }
-func (p *Nork) AbsPath() string { return p.absPath }
-func (p *Nork) RelPath() string { return p.relPath }
-func (p *Nork) SetAbsPath(s string) { p.absPath = s }
-func (p *Nork) SetRelPath(s string) { p.relPath = s }
+func (p *Nork) IsDirlike() bool { return p.IsDirlike() }
+func (p *Nork) AbsPath() string { return p.AbsPath() }
+func (p *Nork) RelPath() string { return p.RelPath() }
+func (p *Nork) SetAbsPath(s string) { p.SetAbsPath(s) }
+func (p *Nork) SetRelPath(s string) { p.SetRelPath(s) }
 
 

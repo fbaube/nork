@@ -14,7 +14,7 @@ type Stringser interface {
 
 // The interfaces have to be divided into two sets:
 //  - One for Nork, that works with a basic tree.
-//  - One for  Cnty, that works for such a tree, but
+//  - One for Cnty, that works for such a tree, but
 //    with additional func's defined for a filesystem.
 //  - Cnty can redefine-and-override Nork versions. 
 
@@ -40,7 +40,6 @@ type Norker interface {
 	// ======================
 	// Level is zero-based (i.e. root Nork's is 0) 
 	Level() int
-	// PACKAGE METHODS
 	// SetLevel(int) // should be self-calculated by node 
 	// Root should always return the root
 	//  (at arena index 0, if one is used) 

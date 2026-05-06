@@ -3,10 +3,10 @@ package nork
 import (
 )
 
-func (p *Cnty) AbsFP() string { return p.absPath }
-func (p *Cnty) RelFP() string { return p.relPath }
-func (p *Cnty) SetAbsFP(s string) { p.absPath = s }
-func (p *Cnty) SetRelFP(s string) { p.relPath = s }
+func (p *Cnty) AbsFP() string { return p.AbsPath() }
+func (p *Cnty) RelFP() string { return p.RelPath() }
+func (p *Cnty) SetAbsFP(s string) { p.SetAbsPath(s) }
+func (p *Cnty) SetRelFP(s string) { p.SetRelPath(s) }
 
 /* REWRITE to add GNORK func's 
 

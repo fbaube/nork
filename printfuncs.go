@@ -48,10 +48,10 @@ func (p *Nork) LineSummaryString() string {
 	if p.NextPeer() != nil { sb.WriteString("N ") }
 	if p.HasKids()  { sb.WriteString("kid(s) ") }
 	*/
-	if p.relPath == "" {
+	if p.RelPath() == "" {
 		sb.WriteString("NOPATH")
 	} else {
-		sb.WriteString(p.relPath)
+		sb.WriteString(p.RelPath())
 	}
 	return (sb.String())
 }

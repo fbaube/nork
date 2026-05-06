@@ -1,10 +1,8 @@
 package nork
 
-import(
-	"errors"
+import( 
 	L  "github.com/fbaube/mlog"
 	FU "github.com/fbaube/fileutils"
-	FP "path/filepath"
 )
 	
 // NorkFactory creates a root node and then stores and tracks the 
@@ -19,6 +17,8 @@ type NorkFactory struct {
 //	isDir	      bool 
 //	summaryString StringFunc
 }
+
+/*
 
 // NewNorker will make it possible to supply 
 // a custom `New` func to a new factory. 
@@ -69,30 +69,38 @@ func NewNorkFactory(rootPath string) (*NorkFactory, *Nork, error) {
 	return pNF, pRootNork, nil
 }
 
+*/
+
 func (p *NorkFactory) RootPath() string {
      return p.RootFPs.AbsFP
      }
 
-// NewNork expects a relative path (!!), and does not either
-// (a) set/unset the bool [isDir] or (b) load file content,
-// because these are expensive operations that can and should
-// be done elsewhere, and also (c) they do not apply if this
-// is being used for XML DOM. 
-func (pFac *NorkFactory) NewNork(aRelPath string) *Nork {
+// NewFilepathNork expects a relative path (but why? - 
+// the reason is forgotten - but it does get thru more
+// runtime security checks that way). It does not load 
+// file content, because it is an expensive operation 
+// that can and should be done elsewhere.
+//
+// It really only loads the ´Filepaths`, so it is kind
+// of useless. It does not touch other fields in the `Nork`.
+//
+// Per the func name, do not use this for a path that
+// is not a filesystem path.
+// .
+func (pFac *NorkFactory) NewFilepathNork(aRelPath string) *Nork {
 	if aRelPath == "" {
-		L.L.Error("NewNork: missing path")
+		L.L.Error("NewFPnork: missing path")
 		return nil 
 	}
 	// Note that this also allocates the Nork, and 
 	// "should" provide access to its non-public fields 
-	pG := new(Nork) 
-	pG.SetRelPath(aRelPath)
-	asAbsPath := FP.Join(pFac.RootPath(), aRelPath)
-	if FU.IsDirAndExists(asAbsPath) {
-	   asAbsPath = FU.EnsureTrailingPathSep(asAbsPath)
-	   }
-	pG.absPath = asAbsPath // FU.AbsFilePath(asAbsPath) 
-	// pG.isDir =... sorry, not done here 
-	return pG
+	pNN := new(Nork)
+	var e error 
+	pNN.FPs = *FU.NewFilepaths(aRelPath)
+	if pNN.FPs.HasError() {
+	     	L.L.Error("NewFPnork: " + e.Error())
+                return nil
+        }
+	return pNN
 }
 
