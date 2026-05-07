@@ -87,7 +87,7 @@ import(
 // a Nork, because a leaf node can be either a file or a dir, and a
 // field like "canKid bool" is a bit OTT, so the file/dir distinction
 // is handled instead by an outer struct type that embeds Nork, such 
-// as [fileutils.FSItem]. 
+// as [fileutils.FSObject]. 
 //
 // If we build up a tree of Norks when processing an [os.DirFS], the 
 // strict ordering provided by DirFS is not strictly needed, BUT it 
