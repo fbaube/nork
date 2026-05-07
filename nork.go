@@ -173,7 +173,9 @@ type Nork struct {
     // FPs includes flags IsDir, IsDirlike, DoesNotExist.
     // For non-FS use case, IsDir() might be sorta "CanKids". 
     // IsDirlike should be considered TBD for anything but FS.
-    FPs FU.Filepaths 
+    // OBSOLETE: FPs FU.Filepaths
+    // Instead now we go ahead and use a [*fileutils.FSObject].
+    FSO *FU.FSObject
     // level starts at 0 for root, and isRoot() is (level == 0)
     // (For isRoot() we don't also/alternatively test on whether 
     // Prnt is nil, because we might find other uses for Prnt,

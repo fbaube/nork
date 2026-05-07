@@ -96,8 +96,9 @@ func (pFac *NorkFactory) NewFilepathNork(aRelPath string) *Nork {
 	// "should" provide access to its non-public fields 
 	pNN := new(Nork)
 	var e error 
-	pNN.FPs = *FU.NewFilepaths(aRelPath)
-	if pNN.FPs.HasError() {
+	// pNN.FPs = *FU.NewFilepaths(aRelPath)
+	pNN.FSO = FU.NewFSObject(aRelPath)
+	if pNN.FSO.HasError() {
 	     	L.L.Error("NewFPnork: " + e.Error())
                 return nil
         }
