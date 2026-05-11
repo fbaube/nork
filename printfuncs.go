@@ -14,11 +14,8 @@ var printTreeTo, printCssTreeTo io.Writer
 //
 // It does not end the string with (white)space.
 // .
-func (p Nork) LinePrefixString() string {
-	if p.IsRoot() { // && p.Parent == nil
-		return "[R]"
-	// } else if p.Level() == 0 && p.Parent() != nil {
-	} else if p.Level() == 0 || p.Parent() != nil {
+func (p *Nork) LinePrefixString() string {
+	if p.Level() == 0 || p.Parent() != nil {
 		// return fmt.Sprintf("[%d]", p.seqID)
 		return "[?!R?!]"
 	} else {
@@ -37,6 +34,7 @@ func yn(b bool) string {
 	}
 }
 
+/*
 func (p *Nork) LineSummaryString() string {
 	var sb S.Builder
 	if p.IsRoot() {
@@ -47,14 +45,15 @@ func (p *Nork) LineSummaryString() string {
 	if p.Parent()   == nil {	sb.WriteString("NOPARENT ") }
 	if p.NextPeer() != nil { sb.WriteString("N ") }
 	if p.HasKids()  { sb.WriteString("kid(s) ") }
-	*/
-	if p.RelPath() == "" {
+	* /
+	if p.RelFP() == "" {
 		sb.WriteString("NOPATH")
 	} else {
-		sb.WriteString(p.RelPath())
+		sb.WriteString(p.RelFP())
 	}
 	return (sb.String())
 }
+*/
 
 func (p *Nork) PrintTree(w io.Writer) error {
 	// println("PrintTree: could use printer fn")

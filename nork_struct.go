@@ -1,5 +1,5 @@
-// nork is a Generics Node with Ordered Kids. It stores 
-// basic bidirectional parent/kid relationships, plus other 
+// nork is a Node with Ordered Kids. It stores basic
+// bidirectional parent/kid relationships, plus other 
 // useful hierarchy-related info like levels and paths. 
 //
 // interface [Norker] is implemented not for struct
@@ -17,14 +17,14 @@ import(
 //   func (*Nork) FuncName() string
 type StringFunc func(Norker) string
 
-// Nork is a "QuadraNode", handling four directions of connections 
-// for four distinct node user cases (UCs). The associated (generic) 
-// data structure `D` is a pointer, so that the data stored in a
-// Q4Node can be written-to and can be passed around (shared).
+// Nork is a "QuadraNode", handling four directions of
+// connections for four distinct node user cases (UCs). 
+// Nork is kind of a maximalist implementation, and is
+// subject to redefinition and getting slimmed down.
 //
-// QNode is kind of a maximalist implementation of nork,
-// and is subject to redefinition and getting slimmed down.
-//
+// Paths need not be in the filesystem, and so paths are
+// IAW package [path] rather than package [path/filepath].
+// 
 // Child nodes ("Kid"s) have an externally-defined order,
 // implying that child nodes are not directly [Comparable] 
 // amongst themselves. This specific specified order or 
@@ -67,7 +67,7 @@ type StringFunc func(Norker) string
 //  - The field Prnt is for a "Parent" singleton of some type (whenever
 //    applicable).
 //  - The fields Tags and Vers are used pretty much the same in all UC's.
-//  - UC.FSI: File System Item: represent a dir-or-file-or-softlink:
+//  - UC.FSO: File System Object: represent a dir-or-file-or-softlink:
 //    	      Here ordering is less important. Paths are valid FS paths. 
 //            Prnt:dir, Kids:contents(!dir-v-file), Usrs:incoming-symlinks 
 //  - UC.CMS: CMS Usage: Table of Contents line item (transclusion in CMS)
@@ -120,23 +120,6 @@ type StringFunc func(Norker) string
 // from paths to Norks would fail unless the tags are made unique with
 // subscript indices (such as "[1]", "[2]").
 //
-// NOTE: Using Norks for files & dirs exhibits strong typing. Dirs are
-// dirs and files are files and never the twain shall meet. This means
-// that (a) dirs cannot contain own-content, and (b) files can never
-// be non-leaf nodes. (Note tho that symlinks have aspects of both.)
-// However this dir/file/etc typing is too complex to handle here in
-// a Nork, because a leaf node can be either a file or a dir, and a
-// field like "canKid bool" is a bit OTT, so the file/dir distinction
-// is handled instead by an outer struct type that embeds Nork, such
-// as [fileutils.FSObject].
-//
-// If we build up a tree of Norks when processing an [os.DirFS], the
-// strict ordering provided by DirFS is not strictly needed, BUT it
-// can anyways be used (and relied upon) because the three flavors of
-// WalkDir are deterministic (using lexical order). WalkDir does tho
-// promise that a given Nork will always appear AFTER the Nork for
-// its directory has appeared, which makes it "easy" to build a tree.
-//
 // Link fields are lower-cased so that other packages cannot damage links.
 //
 // NOTE: This implementation stores pointers to child nodes in a doubly
@@ -147,85 +130,106 @@ type StringFunc func(Norker) string
 // more efficient variant of Nork that has unordered kids.
 // .
 type Nork struct {
-//  ==============
-//    BASIC NODE
-//   CONNECTIVITY
-//  ==============
-//  Prnt is for a single parent (iff it fits conceptually) 
-//         (typ."Up", but rendered to left, like in NexSTEP)
-    prnt   *Nork  // L: One max, and at top of L-H list 
-//  Kids is ordered child nodes and outgoing links 
-//         (typ."Down", but render to right, like in NexSTEP)
-    kids []*Nork  // R: Many, in order 
-//  Usrs is referrers (like in ToC/ditamap) and incoming links
-//         (typ."Up", but rendered to left, like in NexSTEP)
-    usrs []*Nork  // L: Symlinks/Referrers, listed L-H, under Prnt (if has) 
-//  Tags is metadata tags/facets (rendered above) (can include properties ?)
-    tags []*Nork  // Tags/Facets
-//  Vers is previous versions (is a list, not a tree)
-//         (rendered below, as a stack of cards)
-    vers []*Nork  // Versions
-//  =================
-//    ADVANCED NODE
-//   CHARACTERISTICS
-//    (FS-ORIENTED)
-//  =================
-    // FPs includes flags IsDir, IsDirlike, DoesNotExist.
-    // For non-FS use case, IsDir() might be sorta "CanKids". 
-    // IsDirlike should be considered TBD for anything but FS.
-    // OBSOLETE: FPs FU.Filepaths
-    // Instead now we go ahead and use a [*fileutils.FSObject].
-    FSO *FU.FSObject
-    // level starts at 0 for root, and isRoot() is (level == 0)
-    // (For isRoot() we don't also/alternatively test on whether 
-    // Prnt is nil, because we might find other uses for Prnt,
-    // such as the file that contains a document tree.)
-    // Discussion: It is equal to the number of "/" path separators
-    // *separating* path elements (i.e. not including any leading or
-    // trailing separators). Therefore it is 0 for an XML document
-    // root node or the local root of a file & dir tree (where in
-    // both cases, isRoot() is true and parent() is [probably] nil)), 
-    // and it is >0 for others. Reserve negative numbers for future
-    // (ab)use.
-    // So a Root has a relFP of "." and an absFP that is the rooted 
-    // absolute path of this root node w.r.t. the external environ-
-    // ment (for a file or dir, the file system root; for a markup
-    // node, the absolute path of the containing file.
-    level int
-    // ======================================
-    //  Substructure for: Materialized Paths
-    // ======================================
-    // relPath is use case -specific, but often relative filepath.
-    // Discussion: it is the relative path of this Nork, relative 
-    // to its tree's root Nork, which is the "local root" shared 
-    // with other Norks in the same interconnected tree. (That is 
-    // to say, a local root is the highest/topmost node of a direc-
-    // tory tree imported in a single batch.) The last element of 
-    // the relFP is this Nork's own name/label, analagous to
-    // FP.Base(Path).
-//  relPath string 
-    // absPath is use case -specific, but often absolute filepath.
-    // Discussion: It is the same as path, except that it is rooted 
-    // in - i.e. it is traced back to the root of - a local file
-    // system (or documwnt). For a file or dir in a filesystem,
-    // it is rooted at the filesystem root. For a markup node
-    // or a map/ToC file, it is rooted at the document start.
-//  absPath string 
-//  =================
-//    NODE IDENTITY,
-//   USAGE, USE CASE 
-//  =================
-    Uuid7 string // So can handle ptrs btwn separate trees & lists 
-    UC    string // QuadraMode // UC selector 
+// ===============
+//  NODE IDENTITY
+//   AND USE CASE 
+// ===============
+// creatPath is the path used to instantiate the node.
+// It is not validated, and should conform to package 
+// [path] (not [path/filepath]), and should be ignored 
+// after another path is available in an embedding struct.
+// It always uses forward slash "/" as the path separator.
+// Note that we won't also define an AbsPath here in Nork,
+// because then its presence thruout a tree makes moving 
+// the root of the tree (i.e.. changing its absolute path) 
+// too damned work-intensive and error-prone.
+   creatPath string 
+// Name is the only field that we know works across
+// all Use Cases, and any rules are specific to UC. 
+   Name  string
+// Uuid7 is so that we can make & follow links btwn separate trees & lists.
+   Uuid7 string 
+// UC is Use Case is QuadraMode UC selector
+   UC    string 
+// ==============
+//   BASIC NODE
+//  CONNECTIVITY
+// ==============
+// Prnt is for a single parent (iff it fits conceptually) 
+//        (typ."Up", but rendered to left, like in NexSTEP)
+   prnt   *Nork  // L: One max, and at top of L-H list 
+// Kids is ordered child nodes and outgoing links 
+//        (typ."Down", but render to right, like in NexSTEP)
+   kids []*Nork  // R: Many, in order 
+// Usrs is referrers (like in ToC/ditamap) and incoming links
+//        (typ."Up", but rendered to left, like in NexSTEP)
+   usrs []*Nork  // L: Symlinks/Referrers, listed L-H, under Prnt (if has) 
+// Tags is metadata tags/facets (rendered above) (can include properties ?)
+   tags []*Nork  // Tags/Facets
+// Vers is previous versions (is a list, not a tree)
+//        (rendered below, as a stack of cards)
+   vers []*Nork  // Versions
+// ==========
+//  And also
+// ==========
+// Errer is here because a Nork that is already linked into 
+// a tree might acquire an error due to an external change.
+FU.Errer 
+// level probably does not belong here, but let's
+// put it here to avoid a lot of rewrite (2026.05).
+// 
+// level starts at 0 for root, and isRoot() <=> (level == 0)
+// (For isRoot() we don't also/alternatively test on whether
+// Prnt is nil, because we might find other uses for Prnt,
+// such as the file that contains a document tree.)
+// 
+// Discussion: It is equal to the number of "/" path separators
+// - *separating* path elements (i.e. not including any leading 
+// or trailing separators). Therefore it is 0 for an XML document
+// root node or the local root of a file & dir tree (where in 
+// both cases, isRoot() is true and parent() is [probably] nil)),
+// and it is >0 for others. Reserve negative numbers for future
+// (ab)use.
+// 
+// A Root has a RelPath of "." and can (in principle) an absFP 
+// that is the rooted absolute path of this root node w.r.t. the
+// external environment (for a file or dir, the file system root;
+// for a markup node, the absolute path of the containing file).
+level int 
 }
 
+// NEED ECHO (assume html), INFOS, DEBUG
+/*
 func (p *Nork) IsDir() bool  { return p.IsDir() }
-func (p *Nork) Level()  int  { return p.level }
 func (p *Nork) IsRoot() bool { return p.level == 0 }
 func (p *Nork) IsDirlike() bool { return p.IsDirlike() }
+*/
+
+func (p *Nork) Level()  int  { return p.level }
+func (p *Nork) SetLevel(i int) { p.level = i }
+func (p *Nork) CreatPath() string { return p.creatPath } 
+
+// ===========================
+//  Abs.Path and Rel.Path are
+//   for: Materialized Paths
+// ===========================
+/*
+// AbsPath is use case -specific, but often an absolute filepath.
+// Discussion: It is the same as rel.path, but expanded to be
+// rooted in - i.e. traced back to the root of - a local file
+// system (or documwnt). For a file or dir in a filesystem,
+// it is rooted at the filesystem root. For a markup node
+// or a map/ToC file, it is rooted at the document start.
 func (p *Nork) AbsPath() string { return p.AbsPath() }
-func (p *Nork) RelPath() string { return p.RelPath() }
 func (p *Nork) SetAbsPath(s string) { p.SetAbsPath(s) }
+
+// RelPath is use case -specific, but often a relative filepath.
+// Discussion: it is the relative path of this Nork, relative to
+// its tree's root Nork, which is the "local root" shared with
+// other Norks in the same interconnected tree. (That is to say,
+// a local root is the highest/topmost node of a directory tree
+// imported in a single batch.) The last element of the relFP 
+// is this Nork's own name/label, analagous to FP.Base(Path).
+func (p *Nork) RelPath() string { return p.RelPath() }
 func (p *Nork) SetRelPath(s string) { p.SetRelPath(s) }
-
-
+*/

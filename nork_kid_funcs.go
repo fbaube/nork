@@ -73,7 +73,7 @@ func (p *Nork) AddKid(aKid *Nork) *Nork { // returns aKid
 		panic("E.AddKid(K) can't cos K has non-P parent")
 	}
 	// Set the level & parent now
-	aKid.setLevel(p.Level() + 1)
+	aKid.SetLevel(p.Level() + 1)
 	aKid.SetParent(p)
 	if p.kids == nil || len(p.kids) == 0 { 
 		// ---------------------------------------
