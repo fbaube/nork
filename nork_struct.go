@@ -10,6 +10,8 @@ package nork
 
 import(
 	FU "github.com/fbaube/fileutils"
+	// "uuid"
+	// func NewV7() UUID
 )
 
 // StringFunc is used by interface Norker, so a 
@@ -195,7 +197,11 @@ FU.Errer
 // that is the rooted absolute path of this root node w.r.t. the
 // external environment (for a file or dir, the file system root;
 // for a markup node, the absolute path of the containing file).
-level int 
+   level int
+// -----------
+//  GUI Stuff
+// -----------
+   HasFocus, IsSelected, IsExpanded, IsVisible bool
 }
 
 // NEED ECHO (assume html), INFOS, DEBUG

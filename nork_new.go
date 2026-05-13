@@ -3,6 +3,7 @@ package nork
 import(
 	"errors"
 	"path"
+	// "uuid" 
 )
 
 // NewNork does NOT assume an FS-type environment, and is fairly simple:
@@ -27,7 +28,7 @@ func NewNork(aRelPath string) *Nork {
 	if aRelPath == "" {
 	   pN.SetError(errors.New("newnork: missing (relative) path"))
 	}
-	// FIXME pN.Uuid7 = 
+	// FIXME pN.Uuid7 = uuid.NewV7() 
         return pN
 }
 

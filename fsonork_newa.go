@@ -1,47 +1,52 @@
 package nork
 
 import(
-	"fmt"
-	L  "github.com/fbaube/mlog"
+	"os"
+	"errors"
 	FU "github.com/fbaube/fileutils"
 )
 
-// NewFSOTreeNork expects a relative path (but why? - the reason is
-// forgotten - but it does get thru more runtime security checks 
-// that way). It does not load file content, because it is an
-// expensive operation that can and should be done elsewhere.
-//
-// It loads the ´Filepaths` which does perform a number of checks
-// specific to filesystem objects. Then the content can be loaded
-// lazily at any time.
+// Arg s is a filepath. [FSONork] embeds [Errer].
+// If (Errer.HasError], it is a [*os.PathError].
+func newFSOnork(s string) *FSONork {
+        var pFN = new(FSONork)
+	if s == "" {
+		pFN.SetError(errors.New("newfsonork: missing path"))
+		return pFN
+	}
+        pFN.Nork = *NewNork(s)
+        pFN.FSO = FU.NewFSObject(s)
+	var pPE = new(os.PathError{Path:s})
+        if pFN.Nork.HasError() {
+	   pPE.Op = "newfsonork:newnork"
+	   pPE.Err = pFN.Nork.GetError()
+	   pFN.SetError(pPE)
+        }
+        if pFN.FSO.HasError() {
+	   pPE.Op = "newfsonork:newfsonork"
+	   pPE.Err = pFN.FSO.GetError()
+	   pFN.SetError(pPE)
+        }
+	return pFN
+ }
+
+// NewFSOTreeNork prefers a relative path. It does not load file 
+// content, which is an expensive operation done elsewhere. But it
+// loads the [Filepaths], which does checks specific to filesystem
+// objects. Then the content can be loaded lazily at any time.
 // 
-// Per the func name, do not use this for a path that is not
-// a filesystem path.
+// Do NOT use this for a path that is not a filesystem path.
 // .
 func (pFac *FSOTreeNorkFactory) NewFSOTreeNork(aRelPath string) *FSONork {
-	if aRelPath == "" {
-		L.L.Error("newfsotreenork: missing path")
-		return nil 
-	}
-	// var e error 
-	var pFN  *FSONork
-	pFN = new(FSONork)
-	pFN.Nork = *NewNork(aRelPath)
-	pFN.FSO  = FU.NewFSObject(aRelPath)
-	if pFN.Nork.HasError() {
-	     	pFN.SetError(fmt.Errorf("newfsontreeork:newnork: %w",
-			pFN.Nork.GetError()))
-                return pFN
-        }
-	if pFN.FSO.HasError() {
-	     	pFN.SetError(fmt.Errorf("newfsotreenork:newfso: %w",
-                        pFN.FSO.GetError()))
+	var pFN = newFSOnork(aRelPath)
+	// If error, quick return. 
+	if  pFN.FSO.HasError() {
                 return pFN
         }
 	// Now the [Filepaths] struct [FSO.FPs] is valid, and it has
 	// the object's [os.FileInfo], and it can implement the full
-	// range if functions that are based on the value of the
-	// `FileInfo`, and we can ignore the field [Nork.CreatPath].
+	// range of functions that are based on the value of the
+	// [os.FileInfo], and we can ignore the field [Nork.CreatPath].
 
 	// So here we could do things that depend upon and/or affect 
 	// the internal state of the factory.
@@ -49,47 +54,25 @@ func (pFac *FSOTreeNorkFactory) NewFSOTreeNork(aRelPath string) *FSONork {
 	return pFN
 }
 
-// NewFSOLoneNork expects a relative path (but why? - the reason is
-// forgotten - but it does get thru more runtime security checks 
-// that way). It does not load file content, because it is an
-// expensive operation that can and should be done elsewhere.
+// NewFSOLoneNork prefers a relative path. It does not load file
+// content, which is an expensive operation done elsewhere. But it
+// loads the [Filepaths], which does checks specific to filesystem
+// objects. Then the content can be loaded lazily at any time.
 //
-// It loads the ´Filepaths` which does perform a number of checks
-// specific to filesystem objects. Then the content can be loaded
-// lazily at any time.
-// 
-// Per the func name, do not use this for a path that is not
-// a filesystem path.
+// Do NOT use this for a path that is not a filesystem path.
 // .
 func NewFSOLoneNork(aRelPath string) *FSONork {
-	if aRelPath == "" {
-		L.L.Error("newfsolonenork: missing path")
-		return nil 
-	}
-	// var e error 
-	var pFN  *FSONork
-	pFN = new(FSONork)
-	pFN.Nork = *NewNork(aRelPath)
-	pFN.FSO  = FU.NewFSObject(aRelPath)
-	if pFN.Nork.HasError() {
-	     	pFN.SetError(fmt.Errorf("newfsonloneork:newnork: %w",
-			pFN.Nork.GetError()))
-                return pFN
-        }
-	// IsDir ??
-	if pFN.FSO.HasError() {
-	     	pFN.SetError(fmt.Errorf("newfsolonenork:newfso: %w",
-                        pFN.FSO.GetError()))
+	var pFN = newFSOnork(aRelPath)
+	// If error, quick return. 
+	if  pFN.FSO.HasError() {
                 return pFN
         }
 	// Now the [Filepaths] struct [FSO.FPs] is valid, and it has
 	// the object's [os.FileInfo], and it can implement the full
-	// range if functions that are based on the value of the
-	// `FileInfo`, and we can ignore the field [Nork.CreatPath].
+	// range of functions that are based on the value of the
+	// [os.FileInfo], and we can ignore the field [Nork.CreatPath].
 
-	// So here we could do things that depend upon and/or affect 
-	// the internal state of the factory.
-
+	// IsDir ??
 	return pFN
 }
 
