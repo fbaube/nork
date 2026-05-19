@@ -4,7 +4,7 @@ import(
 	FU "github.com/fbaube/fileutils"
 )
 
-// FSONork embeds a Nork "QuadraNode".
+// FSONork embeds an FSO and a Nork (a "QuadraNode"). 
 //
 // The UC (Use Case) is:
 //  - UC.FSI: File System Item: represent a dir-or-file-or-softlink:

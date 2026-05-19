@@ -3,7 +3,7 @@ module github.com/fbaube/nork
 go 1.26.0
 
 require (
-	github.com/fbaube/fileutils v0.0.0-20260508165924-0775e892866d
+	github.com/fbaube/fileutils v0.0.0-20260517055322-b852341d926f
 	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
 )
 
