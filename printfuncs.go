@@ -62,11 +62,14 @@ func (p *Nork) PrintTree(w io.Writer) error {
 	}
 	// printTreeTo = w
 	// e := p.InfosAsTree(w)
+	fmt.Printf("StringserTree OMITTED! \n")
+	/*
 	e := p.StringserTree(InfosG, w)
 	if e != nil {
 		println("nordPrintOneLiner ERR:", e.Error())
 		return e
 	}
+	*/
 	return nil
 }
 
