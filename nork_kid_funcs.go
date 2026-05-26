@@ -164,8 +164,11 @@ func (p *Nork) LastKid() *Nork {
 }
 
 // PrevPeer provides read-only access for other packages. Can return nil.
+// 2026.05: It needs access to the slice it is in, which means access
+// to the parent, so if parent is nil, this returns nil. 
 func (p *Nork) PrevPeer() *Nork {
 	// return p.prevPeer
+	if p.prnt == nil { return nil } 
 	// Find in list and return preceding
 	var ppk []*Nork = p.prnt.kids
 	if ppk == nil || len(ppk) == 0 { return nil }
@@ -175,8 +178,11 @@ func (p *Nork) PrevPeer() *Nork {
 }
 
 // NextPeer provides read-only access for other packages. Can return nil.
+// 2026.05: It needs access to the slice it is in, which means access
+// to the parent, so if parent is nil, this returns nil. 
 func (p *Nork) NextPeer() *Nork {
 	// return p.nextPeer
+	if p.prnt == nil { return nil } 
 	// Find	in list	and return succeeding
 	var ppk []*Nork = p.prnt.kids
 	if ppk == nil || len(ppk) == 0 { return nil }

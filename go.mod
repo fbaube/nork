@@ -3,7 +3,7 @@ module github.com/fbaube/nork
 go 1.26.0
 
 require (
-	github.com/fbaube/fileutils v0.0.0-20260517055322-b852341d926f
+	github.com/fbaube/fileutils v0.0.0-20260524182024-38a64571b887
 	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
 )
 
@@ -21,6 +21,6 @@ require (
 	github.com/mgutz/str v1.2.0 // indirect
 	github.com/nbio/xml v0.0.0-20260302224236-9f64bb3b5a9e // indirect
 	golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a // indirect
-	golang.org/x/sys v0.44.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
