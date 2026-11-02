@@ -99,6 +99,7 @@ func (p *Nork) Debug() string {
 	return "FIXME DEBUG"
 }
 
+/*
 func EchoG(p *Nork) string {
 	return p.Echo()
 }
@@ -108,6 +109,7 @@ func InfosG(p *Nork) string {
 func DebugG(p *Nork) string {
 	return p.Debug()
 }
+*/
 
 func nordPrintCssOneLinerPre(p Norker) error {
 	// firstEntry := true

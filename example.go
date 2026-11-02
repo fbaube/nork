@@ -2,5 +2,12 @@ package nork
 
 // https://bitfieldconsulting.com/posts/examples
 
-func Example() {
+import(
+    "fmt"
+)
+    
+func ExampleSomething() {
+     fmt.Println(2+2)
+    // Output:
+    // 4
 }

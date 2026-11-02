@@ -1,10 +1,11 @@
 module github.com/fbaube/nork
 
-go 1.26.0
+go 1.27.1
 
 require (
 	github.com/fbaube/fileutils v0.0.0-20260524182024-38a64571b887
-	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
+	github.com/fbaube/mlog v0.0.0-20260906153105-a92fb895decf
+	github.com/fbaube/orderednodes v0.0.0-20260519121740-0972119f7201
 )
 
 require (

@@ -1,11 +1,3 @@
-// nork is a Node with Ordered Kids. It stores basic
-// bidirectional parent/kid relationships, plus other 
-// useful hierarchy-related info like levels and paths. 
-//
-// interface [Norker] is implemented not for struct
-// [Nork] but rather for the pointer, i.e. `*Nork´. 
-// This makes nodes writable and also sharable.
-//
 package nork
 
 import(
@@ -19,117 +11,12 @@ import(
 //   func (*Nork) FuncName() string
 type StringFunc func(Norker) string
 
-// Nork is a "QuadraNode", handling four directions of
-// connections for four distinct node user cases (UCs). 
-// Nork is kind of a maximalist implementation, and is
-// subject to redefinition and getting slimmed down.
+// Nork is TBS.
 //
-// Paths need not be in the filesystem, and so paths are
-// IAW package [path] rather than package [path/filepath].
-// 
 // Child nodes ("Kid"s) have an externally-defined order,
 // implying that child nodes are not directly [Comparable] 
 // amongst themselves. This specific specified order or 
 // child nodes is essential for representation of content.
-//
-// (Child ordering can help in other contexts too, such
-// as filesystem operations, but it turns out that the
-// Go stdlib generally returns directory items in an 
-// order - lexical order - and walks directories in
-// lexical order.)
-//
-// The ordering lets us define funcs like FirstKid, NextPeer,
-// PrevPeer, LastKid. They are defined in interface [Norker].
-//
-// Structs that embed Nork can use funcs to redefine 
-// the names and usage of fields in Nork. For example,
-// a Nork embedded in a [Cnty] (Content Entity) used for
-// a file-or-dir can provide access to non-public field
-// `relPath` via `func RelFP()` (where FP is filepath). 
-//
-// Implementation of Interface 
-//
-// Methods on Nork need to be methods on pointers rather
-// than methods on values. But the interface [Norker]
-// will be defined on pointers rather than values, so
-// the resulting syntax will be visually acceptable.
-//
-//
-// When a Nork is embedded in another struct, the embedding struct
-// can rename the functions defined here. For example, [Nork.relPath]
-// can be renamed as ´relFP`when we are dealing with a filesystem.
-//
-// Directions in GUI: 
-//  1. Left is ParentDir and Incoming Links
-//  2. Right is Kids and Outgoing Links
-//  3. Up is Incomiong Facets and maybe other metadata
-//  4. Down is Versions 
-//
-// Fields and use cases: 
-//  - The field Prnt is for a "Parent" singleton of some type (whenever
-//    applicable).
-//  - The fields Tags and Vers are used pretty much the same in all UC's.
-//  - UC.FSO: File System Object: represent a dir-or-file-or-softlink:
-//    	      Here ordering is less important. Paths are valid FS paths. 
-//            Prnt:dir, Kids:contents(!dir-v-file), Usrs:incoming-symlinks 
-//  - UC.CMS: CMS Usage: Table of Contents line item (transclusion in CMS)
-//    	      This should be an ideal use case. 
-//            Prnt:?TBD, Kids:sub-ToC's/outrefs, Usrs:inrefs+transcluders
-//  - UC.XML: XML text: tag/element in markup (XML, or other w AST)
-//    	      This has complexity handling same-named siblings, such as
-//	      multiple <p> tags. Paths are tricky (mult. same tags).
-//            Prnt:parent-elm(or file @root), Kids:kid-elms, Usrs:?entity-stuf
-//  - UC.GST: GolangAST: Go code AST node (https://pkg.go.dev/go/ast#Node)
-//          Pnt:node(or root's file), Kids:AST, Usrs:callers/refs
-//
-// Note that UUID might take on outsized importance, because it might be
-// used to reference all manner of other DB tables and data structures
-// and external (to the system) targets. 
-// It may become necessary to add prefixes to UUIDs to specify (e.g.) 
-// the DB tables of targets.
-//
-// Also there are two distinct memory management nodes for allocating and
-// linking nodes:
-//  - The "traditional method" of allocating nodes individually, and linking
-//    them using pointers. Using this method, both deletions and insertions
-//    are relatively simple.
-//     - Such nodes can also be loaded into a map, for random access to nodes
-//       based on path.
-//  - The "new-fangled way" called an "arena", where we put all our nodes in
-//    a big slice, and link them using indices. This method is much kinder
-//    on memory management, but might becomes clumsy when we need dynamic
-//    node management.
-//     - Deletions are easy if we just zero out the slice entry; we cannot
-//       then do compaction because it would require updating all indices
-//       past the first point of compaction.
-//     - Insertions are costly. However note that in this implementation,
-//       for a node's kids, we use a linked list rather than a slice, so
-//       this makes it easier to append a new node at the end of the
-//       arena-slice and then update indices, wherever they may be
-//       elsewhere in the slice.
-//     - In any case, if an arena-slice has to grow (because of a call
-//       to append), it might be moved elsewhere in memory, which would
-//       invalidate all ptrs to other Norks! If this happens, we should
-//       trust only the "traditional method".
-//
-// Also there are multiple ways to represent node trees in our SQLite DBMS,
-// and multiple ways to walk a node tree, so there is a unavoidable complexity
-// wherever we look.
-//
-// NOTE: DOM markup exhibits name duplication: In UC.1 we never have two
-// same-named files in the same directory, but in UC.2 we might have (for
-// example) multiple sibling <p> tags. So when representing markup, a map
-// from paths to Norks would fail unless the tags are made unique with
-// subscript indices (such as "[1]", "[2]").
-//
-// Link fields are lower-cased so that other packages cannot damage links.
-//
-// NOTE: This implementation stores pointers to child nodes in a doubly
-// linked list, not a slice. Therefore a Nork does not have a complete
-// set of pointers to all of its kids. Therefore (a) it is not simple
-// to get a kid count, because it requires a list traversal, and
-// (b) it is not feasible to monify this code to define a simpler,
-// more efficient variant of Nork that has unordered kids.
 // .
 type Nork struct {
 // ===============
