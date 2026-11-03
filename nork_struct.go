@@ -2,8 +2,6 @@ package nork
 
 import(
 	FU "github.com/fbaube/fileutils"
-	// "uuid"
-	// func NewV7() UUID
 )
 
 // StringFunc is used by interface Norker, so a 
@@ -11,7 +9,7 @@ import(
 //   func (*Nork) FuncName() string
 type StringFunc func(Norker) string
 
-// Nork is TBS.
+// Nork is an all-weather, all-terrain tree node. 
 //
 // Child nodes ("Kid"s) have an externally-defined order,
 // implying that child nodes are not directly [Comparable] 
@@ -19,6 +17,7 @@ type StringFunc func(Norker) string
 // child nodes is essential for representation of content.
 // .
 type Nork struct {
+
 // ===============
 //  NODE IDENTITY
 //   AND USE CASE 
@@ -36,38 +35,60 @@ type Nork struct {
 // Name is the only field that we know works across
 // all Use Cases, and any rules are specific to UC. 
    Name  string
-// Uuid7 is so that we can make & follow links btwn separate trees & lists.
-   Uuid7 string 
+// Uuid7 is so that we can make & follow links btwn
+// separate trees & lists. A Uuid7 includes a DB
+// table name and a DB rowID. 
+   Uuid7
 // UC is Use Case is QuadraMode UC selector
    UC    string 
+
 // ==============
 //   BASIC NODE
 //  CONNECTIVITY
 // ==============
-// Prnt is for a single parent (iff it fits conceptually) 
-//        (typ."Up", but rendered to left, like in NexSTEP)
-   prnt   *Nork  // L: One max, and at top of L-H list 
-// Kids is ordered child nodes and outgoing links 
-//        (typ."Down", but render to right, like in NexSTEP)
-   kids []*Nork  // R: Many, in order 
-// Usrs is referrers (like in ToC/ditamap) and incoming links
-//        (typ."Up", but rendered to left, like in NexSTEP)
-   usrs []*Nork  // L: Symlinks/Referrers, listed L-H, under Prnt (if has) 
-// Tags is metadata tags/facets (rendered above) (can include properties ?)
-   tags []*Nork  // Tags/Facets
-// Vers is previous versions (is a list, not a tree)
-//        (rendered below, as a stack of cards)
-   vers []*Nork  // Versions
-// ==========
-//  And also
-// ==========
-// Errer is here because a Nork that is already linked into 
-// a tree might acquire an error due to an external change.
+// ON-DISK and IN-MEM have the same structure,
+// so maybe they could be redefined using generics.
+// Each is a slice except Prnt, which is a single item.
+//  - Prnt is for a single parent (iff it fits conceptually) 
+//    (typ."Up", but gets rendered to the left, like in NexSTEP)
+//  - Kids is ordered child nodes and outgoing links 
+//    (typ."Down", but gets rendered to the right, like in NexSTEP)
+//  - Usrs is referrers (like in a ToC or ditamap) and incoming links
+//    (typ."Up", but gets rendered to the left, like in NexSTEP)
+//  - Tags is metadata tags/facets (gets rendered above)
+//    (can include properties ?)
+//  - Vers is previous versions (gets rendered below, as a deck)
+//   (done as a list, not a tree)
+// ================
+//  ON-DISK: UUIDs
+// ================
+   prntU   Uuid7  // Left: One max, and at top of L-H list 
+   kidsU []Uuid7  // Rite: Many, in order 
+   usrsU []Uuid7  // Left: Symlinks/Referrers
+   tagsU []Uuid7  // Topp: Tags/Facets
+   versU []Uuid7  // Botm: Versions
+// ===============
+//  IN-MEM: *Nork 
+// ===============
+   prnt   *Nork  // Left: One max, and at top of L-H list 
+   kids []*Nork  // Rite: Many, in order 
+   usrs []*Nork  // Left: Symlinks/Referrers
+   tags []*Nork  // Topp: Tags/Facets
+   vers []*Nork  // Botm: Versions
+
+// =============
+//  OTHER ITEMS 
+// =============
+
+// Errer is here because a Nork that was created
+// successfully and linked into a tree might later 
+// acquire an error due to an external change.
 FU.Errer 
+
 // level probably does not belong here, but let's
 // put it here to avoid a lot of rewrite (2026.05).
-// 
 // level starts at 0 for root, and isRoot() <=> (level == 0)
+//
 // (For isRoot() we don't also/alternatively test on whether
 // Prnt is nil, because we might find other uses for Prnt,
 // such as the file that contains a document tree.)
@@ -80,15 +101,16 @@ FU.Errer
 // and it is >0 for others. Reserve negative numbers for future
 // (ab)use.
 // 
-// A Root has a RelPath of "." and can (in principle) an absFP 
+// A Root has a RelPath of "." and can (in principle) be an absFP 
 // that is the rooted absolute path of this root node w.r.t. the
 // external environment (for a file or dir, the file system root;
 // for a markup node, the absolute path of the containing file).
    level int
+   
 // -----------
 //  GUI Stuff
 // -----------
-   HasFocus, IsSelected, IsExpanded, IsVisible bool
+   IsFocused, IsSelected, IsExpanded, IsVisible bool
 }
 
 // NEED ECHO (assume html), INFOS, DEBUG

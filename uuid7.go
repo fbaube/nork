@@ -36,6 +36,7 @@ import (
 	"encoding/binary"
 	"sync"
 	"time"
+    "uuid"
     /*
     "bytes"
     "cmp"
@@ -48,7 +49,7 @@ import (
 //
 // UUIDs are comparable, such as with the == operator.
 // .
-type UUID [16]byte
+type Uuid7 uuid.UUID // [16]byte
 
 var (
 	v7mu            sync.Mutex
@@ -94,7 +95,7 @@ var (
 // 12..15 |    rand_b     |      'T'      |      'B'      |      'L'      |
 //        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // .
-func NewV7() UUID {
+func NewV7() Uuid7 {
 	// UUIDv7 is defined in RFC 9562 section 5.7 as:
 	//
 	//  0                   1                   2                   3
@@ -123,7 +124,7 @@ func NewV7() UUID {
     // The number of seconds elapsed
     // since (start of) 1970.01.01 UTC .
     // Currently 1.8 billion (needs 31 bits) 
-	secs  := uint64(now.Unix())
+	secs := uint64(now.Unix())
     // func (t Time) Nanosecond() int :: (ns mod s) :: 
     // The nanosecond offset within the second specified
     // by t, in the range [0, (10**9)-1] (needs 30 bits) 
@@ -164,7 +165,7 @@ func NewV7() UUID {
                (timestamp & 0x0ffff)     //  4 hex digits = 16 bits
     // hibits in hex is now TTTT TTTT TTTT vvvv TTTT
 
-    var u UUID
+    var u Uuid7
     // var  BigEndian bigEndian
     // type bigEndian struct{}
     // func PutUint64 stores v into b[0:8].
@@ -190,18 +191,18 @@ func NewV7() UUID {
 
 // setVersion zeroes the high hex digit and then
 // sets it to the version (left-shifted ofc). 
-func (u *UUID) setVersion(version byte) {
+func (u *Uuid7) setVersion(version byte) {
 	u[6] = (u[6] & 0b0000_1111) | (version << 4)
 }
 
 // setVariant zeroes the high two bits and then
 // sets themn to the variant (left-shifted ofc).
-func (u *UUID) setVariant(variant byte) {
+func (u *Uuid7) setVariant(variant byte) {
 	u[8] = (u[8] & 0b0011_1111) | (variant << 6)
 }
 
 // RowID
-func (u *UUID) RowID() uint32 {
+func (u *Uuid7) RowID() uint32 {
      var rowid uint32
      // middle of byte slice -> uint32
      // y := binary.BigEndian.Uint32(buf[offset : offset+4])
@@ -211,7 +212,7 @@ func (u *UUID) RowID() uint32 {
 }
 
 // SetRowID
-func (u *UUID) SetRowID(rowid uint32) {
+func (u *Uuid7) SetRowID(rowid uint32) {
      var variant byte
      variant = u[8] & 0b1100_0000
      // uint32 -> middle of byte slice
@@ -221,12 +222,12 @@ func (u *UUID) SetRowID(rowid uint32) {
 }
 
 // Table
-func (u *UUID) Table() string {
+func (u *Uuid7) Table() string {
      return string(u[13:16])
 }
 
 // SetTable
-func (u *UUID) SetTable(table string) {
+func (u *Uuid7) SetTable(table string) {
      // table += "   "
      // copy(dst []byte, src string) int
      copy(u[13:16], (table+"   ")[0:3])
@@ -247,8 +248,8 @@ func (u *UUID) SetTable(table string) {
 //	f81d4fae7dec11d0a76500a0c91e6bf6
 //
 // Alphabetic characters in the hexadecimal digits may be any case.
-func Parse(s string) (UUID, error) {
-	var u UUID
+func Parse(s string) (Uuid7, error) {
+	var u Uuid7
 	err := u.UnmarshalText([]byte(s))
 	return u, err
 }
