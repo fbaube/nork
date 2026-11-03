@@ -144,10 +144,16 @@
 // are session-specific and should not be persisted to database. 
 //
 // It is straightforward to store 1-to-1 links in a database.
-// But a node with multipe kid nodes poses a problem. But at
-// least for now, there can be a table "links 1-to-N" that
-// records all parent-child links. Similarly, in the Quad-
-// ranode concept, when there are multiple incoming links,
-// another table could be "Links N-to-1".
+// But there won't be many of those, if any. But there will be
+// many cases of a parent with many kids, and for a Quadranode
+// there will be many nodes with multiple parents. (Altho we
+// do not expect to see N-to-N situations.)
+//
+// So for these two situations - 1-to-N, and in the future
+// N-to-1 - there can be two database tables "Links1toN" 
+// and later "LinksNto1". And because every UUID7 will
+// contain a table name corresponding to an item type,
+// use cases where the items are a mix of types can
+// simply store them all together. 
 // .
 package nork
