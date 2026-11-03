@@ -1,18 +1,19 @@
 // Package nork is Nodes with ORdered Kids - a building
 // block for hierarchical trees of nodes, where sibling 
-// nodes are ordered and keep their order. A Nork stores
-// basic bidirectional parent/kid relationships, plus
-// other useful hierarchy-related info like levels and
-// paths. A Nork does not need or use Go generics.
+// nodes are ordered and keep their order.
 //
-// Node order is of course important for markup in general 
-// and XML mixed content in particular, while unimportant 
-// when XML is used purely for data records.
+// A Nork stores bidirectional parent/kid relationships, 
+// plus other useful hierarchy-related info like levels 
+// and paths. A Nork does not need or use Go generics.
+//
+// Node order is of course important for markup languages 
+// in general and XML mixed content in particular, while 
+// unimportant when XML is used purely for data records.
 //
 // Child nodes ("Kid"s) have an externally-defined order,
 // implying that child nodes are not directly [Comparable] 
-// amongst themselves. This specific specified order or 
-// child nodes is essential for representation of content.
+// amongst themselves. This specific externally-provided 
+// order of child nodes is essential for representing content.
 //
 // (Child ordering can help in other contexts too, such
 // as filesystem operations, but it turns out that the
@@ -21,41 +22,33 @@
 // lexical order.)
 //
 // The ordering lets us define funcs like FirstKid, NextPeer,
-// PrevPeer, LastKid. They are defined in interface [Norker].
-// Interface [Norker] is implemented not for struct [Nork] 
-// but rather for the pointer [*Nork]. This makes nodes
-// writable and also sharable.
+// PrevPeer, LastKid. They are defined in interface [Norker],
+// which is implemented not by struct [Nork] but rather by the
+// pointer [*Nork]. This makes nodes writable and also sharable.
 //
-// Advanced Usage
+// Advanced Usage: Directions, Use Cases, Func Aliasing 
 // 
 // Nork can become a "QuadraNode", handling four directions 
 // of connections for four distinct node user cases (UCs). 
 // Nork will at first be kind of a maximalist implementation, 
-// subject to redefinition and getting slimmed down.
+// subject later to redefinition and getting slimmed down.
 //
 // Paths need not be in the filesystem, and so paths are
 // IAW package [path] rather than package [path/filepath].
 // 
-// Structs that embed Nork can use funcs to redefine 
-// the names and usage of fields in Nork. For example,
-// a Nork embedded in a [Cnty] (Content Entity) used for
-// a file-or-dir can provide access to non-public field
-// `relPath` via `func RelFP()` (where FP is filepath). 
-//
-// Using the Interface 
-//
-// When a Nork is embedded in another struct, the embedding 
-// struct can rename the functions defined here. For example, 
-// [Nork.relPath] can be renamed as ´relFP`when we are
-// dealing with a filesystem.
+// Structs that embed struct Nork can use funcs to alias
+// the names and usage of fields in Nork. For example, a 
+// Nork embedded in a [Cnty] (Content Entity) used for a
+// file-or-dir can provide access to non-public field
+// `relPath` via `func RelFP()` (where FP is "filepath"). 
 //
 // Quadranode Discussion
 // 
 // Directions in GUI: 
-//  1. Left is ParentDir and Incoming Links
+//  1. Left  is ParentDir and Incoming Links
 //  2. Right is Kids and Outgoing Links
-//  3. Up is Incomiong Facets and maybe other metadata
-//  4. Down is Versions 
+//  3. Above is Incomiong Facets and maybe other metadata
+//  4. Below is Versions 
 //
 // Fields and use cases: 
 //  - The field Prnt is for a "Parent" singleton of some type (whenever
@@ -74,7 +67,7 @@
 //  - UC.GST: GolangAST: Go code AST node (https://pkg.go.dev/go/ast#Node)
 //          Pnt:node(or root's file), Kids:AST, Usrs:callers/refs
 //
-// Memory and Nodes
+// Memory and Nodes (NOTE: Obsolete discussion) 
 // 
 // There are two distinct memory management nodes for allocating and
 // linking nodes:
@@ -100,9 +93,11 @@
 //       invalidate all ptrs to other Norks! If this happens, we should
 //       trust only the "traditional method".
 //
-// Also there are multiple ways to represent node trees in our SQLite DBMS,
-// and multiple ways to walk a node tree, so there is a unavoidable complexity
-// wherever we look.
+// Representation and Storage of Links Between Nodes
+// 
+// There are multiple ways to represent node trees in our
+// SQLite DBMS, and multiple ways to walk a node tree, so
+// there is a unavoidable complexity wherever we look.
 //
 // NOTE: DOM markup exhibits name duplication: In UC.1 we never have two
 // same-named files in the same directory, but in UC.2 we might have (for
@@ -116,7 +111,7 @@
 // linked list, not a slice. Therefore a Nork does not have a complete
 // set of pointers to all of its kids. Therefore (a) it is not simple
 // to get a kid count, because it requires a list traversal, and
-// (b) it is not feasible to monify this code to define a simpler,
+// (b) it is not feasible to modify this code to define a simpler,
 // more efficient variant of Nork that has unordered kids.
 //
 // UUID version 7
