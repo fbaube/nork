@@ -116,13 +116,38 @@
 //
 // UUID version 7
 // 
-// UUID (version 7, featuring time ordering) had outsized importance,
+// UUID (version 7, featuring time ordering) has outsized importance,
 // because it can be used to reference all manner of other DB tables
 // and data structures and external (to the system) targets.
-// 
+//
+// This could work nicely with the Quadranode concept.
+//
+// A UUID should be absolutely unique within a particular database,
+// and quite possible between databases too.
+//
+// Therefore it should be used as the main indexing field for and
+// and all objects in SQLite.
+//
 // It will be necessary to add prefixes to UUIDs to specify (e.g.) 
 // the DB tables of targets.
 //
 // This requires the use of a custom UUID v7 implementation: WIP!
 //
+// The version defined here replaces much of a UUID's random with
+// fields that embed the item's database table name (or short name)
+// and row ID. The former will add great efficienty; the latter may
+// turn out to be unnecessary and unhelpful.
+//
+// When a tree of items is loaded into memory, a UUID is a very
+// inefficient way to follow a link between nodes, so instead,
+// there should be pointers to other nodes, which (of course)
+// are session-specific and should not be persisted to database. 
+//
+// It is straightforward to store 1-to-1 links in a database.
+// But a node with multipe kid nodes poses a problem. But at
+// least for now, there can be a table "links 1-to-N" that
+// records all parent-child links. Similarly, in the Quad-
+// ranode concept, when there are multiple incoming links,
+// another table could be "Links N-to-1".
+// .
 package nork
