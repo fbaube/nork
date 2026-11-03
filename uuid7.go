@@ -17,6 +17,11 @@ package nork
 //
 // [RFC 9562]: https://www.rfc-editor.org/rfc/rfc9562.html
 
+// This file also works with SQLite RowIDs. Note 
+// that altho a rowID is officially 64 bits, here
+// it is 30 bits, because we do not expect more
+// than one gigabyte of rows in any table.
+
 import (
 	"crypto/rand"
 	"encoding/binary"
@@ -191,7 +196,7 @@ func (u *UUID) RowID() uint32 {
      var rowid uint32
      // middle of byte slice -> uint32
      // y := binary.BigEndian.Uint32(buf[offset : offset+4])
-     rowid = binary.BigEndian.Uint32(u[8:12])
+     rowid = binary.BigEndian.Uint32(u[8:16])
      rowid &= 0x3FFF
      return rowid
 }
@@ -200,8 +205,8 @@ func (u *UUID) RowID() uint32 {
 func (u *UUID) SetRowID(rowid uint32) {
      var variant byte
      variant = u[8] & 0b1100_0000
-     // uint64 -> middle of byte slice
-     // binary.BigEndian.PutUint64(buf[offset:offset+4], x)
+     // uint32 -> middle of byte slice
+     // binary.BigEndian.PutUint32(buf[offset:offset+4], x)
      binary.BigEndian.PutUint32(u[8:12], rowid)
      u[8] |= variant
 }
