@@ -22,6 +22,15 @@ package nork
 // it is 30 bits, because we do not expect more
 // than one gigabyte of rows in any table.
 
+// This creates a new UUID by buildig it up field
+// by field. Another way would be to just call the
+// stdlib to create a new one and then set custom
+// fields. But this would drain random unnecessarily.
+// As written hear, a new UUDI uses MUCH less random
+// than the original stdlib version. However that
+// approach can still be taken if problems are
+// encountered with the approach here. 
+
 import (
 	"crypto/rand"
 	"encoding/binary"
