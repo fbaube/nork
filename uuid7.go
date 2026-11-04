@@ -37,6 +37,8 @@ import (
 	"sync"
 	"time"
     "uuid"
+    "fmt"
+    SU "github.com/fbaube/stringutils"
     /*
     "bytes"
     "cmp"
@@ -242,16 +244,23 @@ func (u *Uuid7) SetTable(table string) {
      copy(u[13:16], (table+"   ")[0:3])
 }
 
-/*
 // String
 func (u Uuid7) String() string {
      // First convert the ms count to a Unix time.
      // Shift the elements into place
      var unix_ts_ms uint64
-     unix_ts_ms = (u[] << n) | (u[] << n) | (u[] << n) | (u[] << n) | (u[] << n) | (u[] << n) | 
-     
+     unix_ts_ms = uint64(binary.BigEndian.Uint64(u[:6]) >> 16)
+     // timestamp to YMDHM
+     // sep. ts bits to sthg else
+     // then tbl & rowID
+     var unix_time time.Time
+     unix_time = time.UnixMilli(int64(unix_ts_ms))
+     println(unix_time.String())
+     var ymdhm string
+     ymdhm = SU.TimeAsYMDHM(unix_time)
+     return ymdhm + fmt.Sprintf("-%1x%2x-%c%c%c-%4d",
+            u[6]&0xF, u[7], u[13], u[14], u[15], u.RowID())
 }
-*/
 
 // =========================================================
 
