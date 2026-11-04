@@ -4,6 +4,14 @@ import(
 	FU "github.com/fbaube/fileutils"
 )
 
+type Linkset[T any] struct {
+   prnt   T  // left: optional: shown at top of L-H list 
+   kids []T  // rite: outgoing: many, in an order 
+   usrs []T  // left: incoming: symlinks(FSO)/referrers(CMS)
+   tags []T  // topp: incoming: tags/facets
+   vers []T  // botm: versions: is a list, not a tree 
+} 
+
 // StringFunc is used by interface Norker, so a 
 // method signature actually (MAYBE!) looks like:
 //   func (*Nork) FuncName() string
@@ -13,7 +21,7 @@ type StringFunc func(Norker) string
 //
 // Child nodes ("Kid"s) have an externally-defined order,
 // implying that child nodes are not directly [Comparable] 
-// amongst themselves. This specific specified order or 
+// amongst themselves. This specific specified order of 
 // child nodes is essential for representation of content.
 // .
 type Nork struct {
@@ -62,6 +70,7 @@ type Nork struct {
 // ================
 //  ON-DISK: UUIDs
 // ================
+   uLinks Linkset[Uuid7] 
    prntU   Uuid7  // Left: One max, and at top of L-H list 
    kidsU []Uuid7  // Rite: Many, in order 
    usrsU []Uuid7  // Left: Symlinks/Referrers
@@ -70,6 +79,7 @@ type Nork struct {
 // ===============
 //  IN-MEM: *Nork 
 // ===============
+   nLinks Linkset[*Nork] 
    prnt   *Nork  // Left: One max, and at top of L-H list 
    kids []*Nork  // Rite: Many, in order 
    usrs []*Nork  // Left: Symlinks/Referrers
