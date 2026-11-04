@@ -65,6 +65,15 @@ var (
 // NewV7 always returns UUIDs which sort in increasing 
 // order, except when the system clock moves backwards.
 //
+// Note that the same effect can be achieved by using
+// the stdlib to create a new V7 UUID:
+//
+//     u := uuid.NewV7()
+//
+// and then calling [SetRowID] and [SetTable]. Note tho
+// that this is not the default because it consumes much
+// more random than is stricly necessary. 
+// 
 // Local Modifications
 //
 // "TBL" is (all or part of) a DB table short name, 
@@ -233,6 +242,16 @@ func (u *Uuid7) SetTable(table string) {
      copy(u[13:16], (table+"   ")[0:3])
 }
 
+/*
+// String
+func (u Uuid7) String() string {
+     // First convert the ms count to a Unix time.
+     // Shift the elements into place
+     var unix_ts_ms uint64
+     unix_ts_ms = (u[] << n) | (u[] << n) | (u[] << n) | (u[] << n) | (u[] << n) | (u[] << n) | 
+     
+}
+*/
 
 // =========================================================
 
