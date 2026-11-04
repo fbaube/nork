@@ -42,7 +42,7 @@
 // file-or-dir can provide access to non-public field
 // `relPath` via `func RelFP()` (where FP is "filepath"). 
 //
-// Quadranode Discussion
+// # Quadranode Discussion
 // 
 // Directions in GUI: 
 //  1. Left  is ParentDir and Incoming Links
@@ -67,7 +67,7 @@
 //  - UC.GST: GolangAST: Go code AST node (https://pkg.go.dev/go/ast#Node)
 //          Pnt:node(or root's file), Kids:AST, Usrs:callers/refs
 //
-// Memory and Nodes (NOTE: Obsolete discussion) 
+// # Memory and Nodes (NOTE: Obsolete discussion) 
 // 
 // There are two distinct memory management nodes for allocating and
 // linking nodes:
@@ -93,7 +93,7 @@
 //       invalidate all ptrs to other Norks! If this happens, we should
 //       trust only the "traditional method".
 //
-// Representation and Storage of Links Between Nodes
+// # Representation and Storage of Links Between Nodes
 // 
 // There are multiple ways to represent node trees in our
 // SQLite DBMS, and multiple ways to walk a node tree, so
@@ -114,7 +114,7 @@
 // (b) it is not feasible to modify this code to define a simpler,
 // more efficient variant of Nork that has unordered kids.
 //
-// UUID version 7
+// # UUID version 7
 // 
 // UUID (version 7, featuring time ordering) has outsized importance,
 // because it can be used to reference all manner of other DB tables
