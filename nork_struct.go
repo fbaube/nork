@@ -4,13 +4,48 @@ import(
 	FU "github.com/fbaube/fileutils"
 )
 
-type Linkset[T any] struct {
-   prnt   T  // left: optional: shown at top of L-H list 
+// Linkset stores the links for a node. It is designed to
+// work both on disk (using UUIDs) and in-memory (using
+// pointers). When persisting to disk, the fields ( prnt
+// prev next ) are sufficient to reconstruct a tree that
+// has all kid nodes in their correct order.
+//
+// There needs to be a distinguished "empty value" to
+// mark a non-value, so for a pointer this should be Go
+// nil and for a UUID it can be the zero-length string.
+//
+// When a tree structure is built that extends upward,
+// with the root at the bottom, maybe some of these
+// field names should be changed to be less confusing. 
+// .
+type Linkset[T comparable] struct {
+   prnt   T  // left: optional: shown at top of L-H list
+   prev   T  // previous sibling, or nil if is the first 
+   next   T  // next sibling,  or nil if it is the last 
    kids []T  // rite: outgoing: many, in an order 
    usrs []T  // left: incoming: symlinks(FSO)/referrers(CMS)
    tags []T  // topp: incoming: tags/facets
    vers []T  // botm: versions: is a list, not a tree 
-} 
+}
+
+// Null returns the zero value for any T.
+// https://www.perplexity.ai/search/717b5c69-194e-4599-88d6-2f00ee7a236a 
+func Null[T comparable]() T {
+     // zed is not initialized to any specific valur,
+     // so it gets initialized to the "zero value" !
+     var zed T
+     return zed
+}
+
+// IsNull reports whether arg is the zero value for T.
+// https://www.perplexity.ai/search/717b5c69-194e-4599-88d6-2f00ee7a236a 
+func IsNull[T comparable](arg T) bool {
+    var zed T
+    return arg == zed
+}
+
+// "==" works byte-for-byte for UUIDs !!
+// See https://www.perplexity.ai/search/717b5c69-194e-4599-88d6-2f00ee7a236a 
 
 // StringFunc is used by interface Norker, so a 
 // method signature actually (MAYBE!) looks like:
@@ -19,10 +54,11 @@ type StringFunc func(Norker) string
 
 // Nork is an all-weather, all-terrain tree node. 
 //
-// Child nodes ("Kid"s) have an externally-defined order,
-// implying that child nodes are not directly [Comparable] 
-// amongst themselves. This specific specified order of 
-// child nodes is essential for representation of content.
+// Child nodes ("Kid"s) have an externally-defined 
+// order, implying that child nodes are not directly 
+// [Comparable] amongst themselves. This specific 
+// specified order of child nodes is essential
+// for representation of content markup.
 // .
 type Nork struct {
 
@@ -45,7 +81,7 @@ type Nork struct {
    Name  string
 // Uuid7 is so that we can make & follow links btwn
 // separate trees & lists. A Uuid7 includes a DB
-// table name and a DB rowID. 
+// table name and (probably?) a DB rowID. 
    Uuid7
 // UC is Use Case is QuadraMode UC selector
    UC    string 
@@ -54,9 +90,9 @@ type Nork struct {
 //   BASIC NODE
 //  CONNECTIVITY
 // ==============
-// ON-DISK and IN-MEM have the same structure,
-// so maybe they could be redefined using generics.
-// Each is a slice except Prnt, which is a single item.
+// ON-DISK and IN-MEM have the same structure, so maybe
+// they could be redefined using generics. Each is a
+// slice except Prnt Prev Next, which are a single items.
 //  - Prnt is for a single parent (iff it fits conceptually) 
 //    (typ."Up", but gets rendered to the left, like in NexSTEP)
 //  - Kids is ordered child nodes and outgoing links 
@@ -70,22 +106,31 @@ type Nork struct {
 // ================
 //  ON-DISK: UUIDs
 // ================
-   uLinks Linkset[Uuid7] 
+   // These "u" (UUID) are behind a pointer because if
+   // a tree is IN-MEM and its nodes do not correspond
+   // to objects ON-DISK, such as nodes in a XML file, 
+   // then assigning UUIDs is just wasteful and confusing.
+   uLinks *Linkset[Uuid7]
+   /*
    prntU   Uuid7  // Left: One max, and at top of L-H list 
    kidsU []Uuid7  // Rite: Many, in order 
    usrsU []Uuid7  // Left: Symlinks/Referrers
    tagsU []Uuid7  // Topp: Tags/Facets
    versU []Uuid7  // Botm: Versions
+   */
 // ===============
 //  IN-MEM: *Nork 
 // ===============
-   nLinks Linkset[*Nork] 
+   // These "m" (memory) proabbly do not need to be a 
+   // behind pointer, but uLinks does it so let's here too. 
+   mLinks *Linkset[*Nork]
+   /*
    prnt   *Nork  // Left: One max, and at top of L-H list 
    kids []*Nork  // Rite: Many, in order 
    usrs []*Nork  // Left: Symlinks/Referrers
    tags []*Nork  // Topp: Tags/Facets
    vers []*Nork  // Botm: Versions
-
+   */
 // =============
 //  OTHER ITEMS 
 // =============
@@ -97,7 +142,8 @@ FU.Errer
 
 // level probably does not belong here, but let's
 // put it here to avoid a lot of rewrite (2026.05).
-// level starts at 0 for root, and isRoot() <=> (level == 0)
+// level starts at 0 for root, and isRoot() iff
+// (level == 0)
 //
 // (For isRoot() we don't also/alternatively test on whether
 // Prnt is nil, because we might find other uses for Prnt,

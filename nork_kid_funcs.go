@@ -11,8 +11,10 @@ import (
 // }
 
 // THESE FUNC'S ARE HACKY !!
-// They use "Kids" like they are still a link list,
+// They use "Kids" like they are still a linked list,
 // but now in this rewrite (2026.04) they are a slice.
+// 2026.11: We need a way to write kid order to the DB,
+// so let's stick with Prev and Next, and linked list. 
 
 // HasKids is duh.
 // func (p *Nork) [D any] HasKids() bool {
