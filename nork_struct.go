@@ -46,7 +46,6 @@ func IsNull[T comparable](arg T) bool {
 
 // "==" works byte-for-byte for UUIDs !!
 // See https://www.perplexity.ai/search/717b5c69-194e-4599-88d6-2f00ee7a236a 
-
 // StringFunc is used by interface Norker, so a 
 // method signature actually (MAYBE!) looks like:
 //   func (*Nork) FuncName() string
