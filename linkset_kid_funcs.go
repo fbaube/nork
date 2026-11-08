@@ -6,9 +6,30 @@ import (
 	"slices"
 )
 
-// func (n *Node[D]) AddChild(child *Node[D]) {
-//     n.Children = append(n.Children, child)
-// }
+// All these func's use generics on << (p *Linkset[T]) >>, 
+// and have to work when T is either [*Nork] or [Uuid7].
+
+// Func's in the file are divided into three groups:
+//  - Basic parent/child stuff
+//     - Parent() T 
+//     - SetParent(p2 T) 
+//     - HasKids() bool 
+//     - ValidateKids() err 
+//  - Prev & Next peer (i.e. sibling node) 
+//     - Prev() T 
+//     - Next() T
+//     - SetPrev(p2 T)
+//     - SetNext(p2 T)
+//  - Kid queries
+//     - FirstKid() T
+//     - LastKid() T
+//     - KidsAsSlice() []T 
+//  - Kid changes
+//     - AddKids(rKids []T) T // returns p, the Parent
+//     - AddKid (aKid   T) T // returns aKid
+//     - SetFirstKid(p2 T)  // does what ?
+//     - SetLastKid(p2 T)  // does what ?
+//     - func's to delete kid(s) ? 
 
 // 2026.11: We need a way to persist the order of Kid nodes 
 // to the DB, so let's
@@ -21,11 +42,17 @@ import (
 // preserve prev/next info when persisted to DB, so
 // when we read it back in we have to check paths 
 // to match kids to parents, and for ordering, we
-// have to rely on the order returned from the DB,
-// which is not robust. So it makes sense to match
-// parents and kids (and prev and next) using UUIDs,
-// and then the paths of parents and kids can be
-// checked as a redundancy for finding logic errors.
+// have to rely on the order returned from the DB.
+// This complexity is not robust!
+//
+// So it makes sense to match parents and kids (and
+// prev and next) using UUIDs, and then the paths of
+// parents and kids can be checked as a redundancy
+// for finding logic errors.
+//
+// So when a tree is redd (back) in from the DB, 
+// it should be straightforward to validate each
+// set of (parent + kid(s)).
 //
 // 1-to-1 links can be stored dirctly in persisted
 // items rather than in a línk table, as required
@@ -35,9 +62,11 @@ import (
 // Therefore a persisted Nork has five fields:
 // Prnt, Prev, Next, Kid1, KidN.
 
+// ==========================
+//  BASIC PARENT/CHILD STUFF
+// ==========================
+
 // HasKids is duh.
-// func (p *Linkset) [D any] HasKids() bool {
-// func (p *Linkset[T]) HasKids() bool {
 func (p *Linkset[T]) HasKids() bool {
 	// return p.FirstKid() != nil && p.LastKid() != nil
 	return p.kids != nil && len(p.kids) != 0
@@ -54,14 +83,14 @@ func (p *Linkset[T]) SetParent(p2 T) {
 	p.prnt = p2
 }
 
-// SetPrevPeer has no side effects.
-func (p *Linkset[T]) SetPrevPeer(p2 T) {
-	p.SetPrevPeer(p2)
+// SetPrev has no side effects.
+func (p *Linkset[T]) SetPrev(p2 T) {
+	p.SetPrev(p2)
 }
 
-// SetNextPeer has no side effects.
-func (p *Linkset[T]) SetNextPeer(p2 T) {
-	p.SetNextPeer(p2)
+// SetNext has no side effects.
+func (p *Linkset[T]) SetNext(p2 T) {
+	p.SetNext(p2)
 }
 
 /* N/A for SLICES (instead of linked lists)
@@ -86,7 +115,7 @@ func (p *Linkset[T]) SetLastKid(p2 T) {
 // NOTE that just about ALL old (linked list) code is ripped out. 
 func (p *Linkset[T]) AddKid(aKid *Nork) T { // returns aKid
 	// fmt.Printf("nord: ptrs? aKid<%T> p<%T> \n", aKid, p)
-	if aKid.PrevPeer() != nil || aKid.NextPeer() != nil {
+	if aKid.Prev() != nil || aKid.Next() != nil {
 		fmt.Fprintf(os.Stdout, "FATAL in AddKid: Tag<< %+v >> kid<< %+v >>\n", p, aKid)
 		panic("AddKid(K) can't cos K has siblings")
 	}
@@ -118,7 +147,7 @@ func (p *Linkset[T]) AddKid(aKid *Nork) T { // returns aKid
 func (p *Linkset[T]) AddKids(rKids []*Nork) T { // returns p 
 	// fmt.Printf("nord: ptrs? aKid<%T> p<%T> \n", aKid, p)
 	for _, aKid := range rKids {	
-	    if aKid.PrevPeer() != nil || aKid.NextPeer() != nil {
+	    if aKid.Prev() != nil || aKid.Next() != nil {
 		fmt.Fprintf(os.Stdout, "FATAL in AddKids: Tag<< %+v >> kid<< %+v >>\n", p, aKid)
 		panic("AddKids(K) can't cos K has siblings")
 		}
@@ -140,8 +169,8 @@ func (p *Linkset[T]) AddKids(rKids []*Nork) T { // returns p
 	if FK == nil && LK == nil {
 		p.firstKid, p.lastKid = aKid, aKid
 		aKid.SetParent(p)
-		aKid.SetPrevPeer(nil)
-		aKid.SetNextPeer(nil)
+		aKid.SetPrev(nil)
+		aKid.SetNext(nil)
 		return aKid
 	}
 	if !(FK != nil && LK != nil) {
@@ -153,12 +182,12 @@ func (p *Linkset[T]) AddKids(rKids []*Nork) T { // returns p
 			fmt.Fprintf(os.Stdout, "FATAL in AddKid: E<< %+v >> K<< %+v >>\n", p, aKid)
 			panic("E.AddKid: E's last kid dusnt know E")
 		}
-		if LK.NextPeer() != nil {
+		if LK.Next() != nil {
 			fmt.Fprintf(os.Stdout, "FATAL in AddKid: E<< %+v >> K<< %+v >>\n", p, aKid)
 			panic("E.AddKid: E's last kid has a next kid")
 		}
-		LK.SetNextPeer(aKid) // LK.nextKid = aKid
-		aKid.SetPrevPeer(LK) // aKid.prevKid = LK
+		LK.SetNext(aKid) // LK.nextKid = aKid
+		aKid.SetPrev(LK) // aKid.prevKid = LK
 		p.lastKid = aKid
 		aKid.SetParent(p)
 		return aKid
@@ -185,10 +214,10 @@ func (p *Linkset[T]) LastKid() T {
 	return p.kids[ln-1] 
 }
 
-// PrevPeer provides read-only access for other packages. Can return nil.
+// Prev provides read-only access for other packages. Can return nil.
 // 2026.05: It needs access to the slice it is in, which means access
 // to the parent, so if parent is nil, this returns nil. 
-func (p *Linkset[T]) PrevPeer() T {
+func (p *Linkset[T]) Prev() T {
 	// return p.prevPeer
 	if p.prnt == nil { return nil } 
 	// Find in list and return preceding
@@ -199,10 +228,10 @@ func (p *Linkset[T]) PrevPeer() T {
 	return ppk[idx-1]
 }
 
-// NextPeer provides read-only access for other packages. Can return nil.
+// Next provides read-only access for other packages. Can return nil.
 // 2026.05: It needs access to the slice it is in, which means access
 // to the parent, so if parent is nil, this returns nil. 
-func (p *Linkset[T]) NextPeer() T {
+func (p *Linkset[T]) Next() T {
 	// return p.nextPeer
 	if p.prnt == nil { return nil } 
 	// Find	in list	and return succeeding
