@@ -2,25 +2,12 @@ package nork
 
 import (
 	"io"
+    TL "github.com/fbaube/treelinks"
 )
 
-// Stringser is copied from
-// [github.com/fbaube/stringutils.Stringser] to keep out dependencies.
-type Stringser interface {
-        Echo()  string
-        Infos() string
-        Debug() string
-}
-
-// The interfaces have to be divided into two sets:
-//  - One for Nork, that works with a basic tree.
-//  - One for Cnty, that works for such a tree, but
-//    with additional func's defined for a filesystem.
-//  - Cnty can redefine-and-override Nork versions. 
-
-// Norker is satisfied by [*Nork] NOT by Nork.
 type Norker interface {
-     	Stringser
+     	TL.Stringser
+        TL.Treelinkser 
 	// =====================
 	//  PATHS (Rel. & Abs.) 
 	// =====================
@@ -43,31 +30,10 @@ type Norker interface {
 	// SetLevel(int) // should be self-calculated by node 
 	// Root should always return the root
 	//  (at arena index 0, if one is used) 
-	Root() *Nork // RootNork
+	Root() TL.Treelinkser // RootNork
 	IsRoot() bool
 	IsDir() bool
 	IsDirlike() bool
-	// ==================
-	//   NODE LINKS i.e.
-	//  INTERCONNECTIONS
-	// ==================
-	Parent() *Nork
-	SetParent(*Nork)
-	HasKids() bool
-	KidsAsSlice() []*Nork
-	FirstKid() *Nork
-	LastKid()  *Nork
-	PrevPeer() *Nork // cos "PrevKid" = iterator on the parent 
-	NextPeer() *Nork
-	// AddKid returns the just-added kid, who
-	// is added at the end of the list of Kids,
-	// and who (TODO FWIW) knows his own arena
-	// index (using [slices.Index])
-	AddKid(*Nork) *Nork
-	// AddKids returns the method target
-	// - the parent of all the kids 
-	AddKids([]*Nork) *Nork
-	ReplaceBy(*Nork) *Nork // returns Whom
 	// ============
 	//  MISCELLANY
 	// ============
@@ -87,9 +53,11 @@ type Cntyer interface {
 	AbsFP() string
 	SetAbsFP(string)
 	// Kids stuff that only makes sense for Kids in a linked list. 
-	SetFirstKid(*Nork)
-	SetLastKid (*Nork)
-	SetPrevPeer(*Nork)
-	SetNextPeer(*Nork)
+	SetFirstKid(TL.Treelinkser)
+	SetLastKid (TL.Treelinkser)
+	SetPrevPeer(TL.Treelinkser)
+	SetNextPeer(TL.Treelinkser)
 }
+
+
 

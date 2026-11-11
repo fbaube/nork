@@ -8,15 +8,15 @@ type  StringerFunc func(pNode *Nork) string
 func (p *Nork) StringserTree(f StringerFunc, w io.Writer) error {
     	s := f(p) + "\n" 
 	// Write(p []byte) (n int, err error) 
-	_, e := w.Write([]byte(s+"\n"))
+	_, _ = w.Write([]byte(s+"\n")) // e hidn
 	pKid := p.FirstKid()
 	for pKid != nil {
-	    	s = f(pKid)+"\n"
-		_, e = w.Write([]byte(s+"\n"))
-		if e = pKid.StringserTree(f, w); e != nil {
+	    	s = f(pKid.(*Nork))+"\n"
+		_, _ = w.Write([]byte(s+"\n")) // e hidn
+/* FIXME		if e = pKid.StringserTree(f, w); e != nil {
 			return e
-		}
-		pKid = pKid.NextPeer()
+		} */
+		pKid = pKid.Next()
 	}
 	return nil
 }

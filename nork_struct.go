@@ -2,6 +2,7 @@ package nork
 
 import(
 	FU "github.com/fbaube/fileutils"
+	TL "github.com/fbaube/treelinks"
 )
 
 // StringFunc is used by interface Norker, so a 
@@ -60,6 +61,7 @@ type Nork struct {
 //    (can include properties ?)
 //  - Vers is previous versions (gets rendered below, as a deck)
 //   (done as a list, not a tree)
+/*
 // ================
 //  ON-DISK: UUIDs
 // ================
@@ -67,7 +69,7 @@ type Nork struct {
    // a tree is IN-MEM and its nodes do not correspond
    // to objects ON-DISK, such as nodes in a XML file, 
    // then assigning UUIDs is just wasteful and confusing.
-   uLinks *Linkset[Uuid7]
+   uLinks *Treelinks 
    /*
    prntU   Uuid7  // Left: One max, and at top of L-H list 
    kidsU []Uuid7  // Rite: Many, in order 
@@ -80,7 +82,7 @@ type Nork struct {
 // ===============
    // These "m" (memory) proabbly do not need to be a 
    // behind pointer, but uLinks does it so let's here too. 
-   mLinks *Linkset[*Nork]
+   *TL.Treelinks
    /*
    prnt   *Nork  // Left: One max, and at top of L-H list 
    kids []*Nork  // Rite: Many, in order 
