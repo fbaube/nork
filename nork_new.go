@@ -3,7 +3,8 @@ package nork
 import(
 	"errors"
 	"path"
-	// "uuid" 
+	"uuid"
+    TL "github.com/fbaube/treelinks"
 )
 
 // NewNork does NOT assume an FS-type environment, and is fairly simple:
@@ -23,13 +24,15 @@ import(
 //  - There is no distinction between a "tree" Nork and a "lone" Nork 
 // .
 func NewNork(aRelPath string) *Nork {
-     	// Save away the creation-time path 
-        var pN = new(Nork{creatPath:aRelPath, Name:path.Base(aRelPath)})
+    // Save away the creation-time path 
+    var pN = new(Nork{creatPath:aRelPath, Name:path.Base(aRelPath)})
 	if aRelPath == "" {
 	   pN.SetError(errors.New("newnork: missing (relative) path"))
 	}
-	// FIXME pN.Uuid7 = uuid.NewV7() 
-        return pN
+    pN.uuLinks = new(TL.Treelinks)
+    pN.Links  = *new(TL.Treelinks)
+    pN.UUIDv7 = uuid.NewV7()
+    return pN
 }
 
 

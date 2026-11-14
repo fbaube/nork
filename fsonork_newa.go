@@ -15,7 +15,7 @@ func newFSOnork(s string) *FSONork {
 		return pFN
 	}
         pFN.Nork = *NewNork(s)
-        pFN.FSO = FU.NewFSObject(s)
+        pFN.FSO = FU.NewFSObject(s, nil)
 	var pPE = new(os.PathError{Path:s})
         if pFN.Nork.HasError() {
 	   pPE.Op = "newfsonork:newnork"

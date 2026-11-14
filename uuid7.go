@@ -32,7 +32,6 @@ package nork
 // encountered with the approach here. 
 
 import (
-	"crypto/rand"
 	"encoding/binary"
 	"sync"
 	"time"
@@ -40,6 +39,7 @@ import (
     "fmt"
     SU "github.com/fbaube/stringutils"
     /*
+	"crypto/rand"
     "bytes"
     "cmp"
 	"encoding/hex"
@@ -48,10 +48,8 @@ import (
 )
 
 // A UUID is a Universally Unique Identifier as specified in RFC 9562.
-//
 // UUIDs are comparable, such as with the == operator.
-// .
-type Uuid7 uuid.UUID // [16]byte
+// Because a UUID is an array (not a slice), "==" WORKS!
 
 var (
 	v7mu            sync.Mutex
@@ -106,6 +104,9 @@ var (
 // 12..15 |    rand_b     |      'T'      |      'B'      |      'L'      |
 //        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // .
+
+/*
+
 func NewV7() Uuid7 {
 	// UUIDv7 is defined in RFC 9562 section 5.7 as:
 	//
@@ -232,20 +233,25 @@ func (u *Uuid7) SetRowID(rowid uint32) {
      u[8] |= variant
 }
 
+*/
+
 // Table
-func (u *Uuid7) Table() string {
+// func (u *uuid.UUID) Table() string {
+func TableOfUUID(u *uuid.UUID) string {
      return string(u[13:16])
 }
 
 // SetTable
-func (u *Uuid7) SetTable(table string) {
+// func (u *uuid.UUID) SetTable(table string) {
+func SetTableOfUUID(u *uuid.UUID, table string) {
      // table += "   "
      // copy(dst []byte, src string) int
      copy(u[13:16], (table+"   ")[0:3])
 }
 
-// String
-func (u Uuid7) String() string {
+// String assumes v7, and table name in last three bytes.
+// func (u uuid.UUID) String() string {
+func StringOfUUID(u *uuid.UUID) string {
      // First convert the ms count to a Unix time.
      // Shift the elements into place
      var unix_ts_ms uint64
@@ -258,8 +264,8 @@ func (u Uuid7) String() string {
      println(unix_time.String())
      var ymdhm string
      ymdhm = SU.TimeAsYMDHM(unix_time)
-     return ymdhm + fmt.Sprintf("-%1x%2x-%c%c%c-%4d",
-            u[6]&0xF, u[7], u[13], u[14], u[15], u.RowID())
+     return ymdhm + fmt.Sprintf("-%1x%2x-%c%c%c", // -%4d",
+            u[6]&0xF, u[7], u[13], u[14], u[15]) // , u.RowID())
 }
 
 // =========================================================

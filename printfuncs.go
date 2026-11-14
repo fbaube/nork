@@ -15,7 +15,7 @@ var printTreeTo, printCssTreeTo io.Writer
 // It does not end the string with (white)space.
 // .
 func (p *Nork) LinePrefixString() string {
-	if p.Level() == 0 || p.Parent() != nil {
+	if p.Level() == 0 || p.Links.Parent() != nil {
 		// return fmt.Sprintf("[%d]", p.seqID)
 		return "[?!R?!]"
 	} else {

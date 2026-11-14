@@ -1,6 +1,7 @@
 package nork
 
 import(
+    "uuid"
 	FU "github.com/fbaube/fileutils"
 	TL "github.com/fbaube/treelinks"
 )
@@ -37,12 +38,14 @@ type Nork struct {
 // Name is the only field that we know works across
 // all Use Cases, and any rules are specific to UC. 
    Name  string
-// Uuid7 is so that we can make & follow links btwn
-// separate trees & lists. A Uuid7 includes a DB
-// table name and (probably?) a DB rowID. 
-   Uuid7
 // UC is Use Case is QuadraMode UC selector
    UC    string 
+// UUID includes the DB table, so that [OuterOwner]
+// (the embedding super-struct) can be fetched by 
+// UUID directly from the DB, rather than going 
+// thru some kind of in-memory router / map / 
+// UUID registry that figures out which table.
+   UUIDv7 uuid.UUID
 
 // ==============
 //   BASIC NODE
@@ -61,35 +64,22 @@ type Nork struct {
 //    (can include properties ?)
 //  - Vers is previous versions (gets rendered below, as a deck)
 //   (done as a list, not a tree)
-/*
-// ================
-//  ON-DISK: UUIDs
-// ================
-   // These "u" (UUID) are behind a pointer because if
-   // a tree is IN-MEM and its nodes do not correspond
-   // to objects ON-DISK, such as nodes in a XML file, 
-   // then assigning UUIDs is just wasteful and confusing.
-   uLinks *Treelinks 
-   /*
-   prntU   Uuid7  // Left: One max, and at top of L-H list 
-   kidsU []Uuid7  // Rite: Many, in order 
-   usrsU []Uuid7  // Left: Symlinks/Referrers
-   tagsU []Uuid7  // Topp: Tags/Facets
-   versU []Uuid7  // Botm: Versions
-   */
+
 // ===============
-//  IN-MEM: *Nork 
+//  UUIDS ON-DISK
 // ===============
-   // These "m" (memory) proabbly do not need to be a 
-   // behind pointer, but uLinks does it so let's here too. 
-   *TL.Treelinks
-   /*
-   prnt   *Nork  // Left: One max, and at top of L-H list 
-   kids []*Nork  // Rite: Many, in order 
-   usrs []*Nork  // Left: Symlinks/Referrers
-   tags []*Nork  // Topp: Tags/Facets
-   vers []*Nork  // Botm: Versions
-   */
+// These "uu" (UUID) are behind a pointer because if
+// a tree is IN-MEM and its nodes do not correspond
+// to objects ON-DISK, such as nodes in a XML file, 
+// then assigning UUIDs is just wasteful and confusing.
+   uuLinks *TL.Treelinks 
+// ================
+//   UUIDS IN-MEM
+//  creating *Nork 
+// ================
+// Links is by value, not as a pointer.
+   Links TL.Treelinks
+
 // =============
 //  OTHER ITEMS 
 // =============
