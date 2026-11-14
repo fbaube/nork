@@ -1,26 +1,37 @@
 package nork
 
-import "io"
+import(
+//  "io"
+    TL "github.com/fbaube/treelinks"
+)
 
 type InspectorFunc func(pNode *Nork) error
 type  StringerFunc func(pNode *Nork) string 
+
+/*
 
 func (p *Nork) StringserTree(f StringerFunc, w io.Writer) error {
     	s := f(p) + "\n" 
 	// Write(p []byte) (n int, err error) 
 	_, _ = w.Write([]byte(s+"\n")) // e hidn
-	pKid := p.FirstKid()
+	pKid := p.Links.FirstKid()
 	for pKid != nil {
-	    	s = f(pKid.(*Nork))+"\n"
+	    	s = f((pKid.Links)(*Nork))+"\n"
 		_, _ = w.Write([]byte(s+"\n")) // e hidn
 /* FIXME		if e = pKid.StringserTree(f, w); e != nil {
 			return e
-		} */
+		} * /
 		pKid = pKid.Next()
 	}
 	return nil
 }
 
+*/
+
+func (p *Nork) FirstKid() TL.Treelinkser {
+      return p.Links.FirstKid()
+}
+      
 /*
 
 func DumpTree(p *Nork, f StringerFunc, w io.Writer) error {

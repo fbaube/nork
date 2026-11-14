@@ -1,18 +1,19 @@
 module github.com/fbaube/nork
 
-go 1.27.1
+go 1.27.3
 
 require (
-	github.com/fbaube/fileutils v0.0.0-20260524182024-38a64571b887
+	github.com/fbaube/fileutils v0.0.0-20261113174227-f6eed5922451
 	github.com/fbaube/mlog v0.0.0-20260906153105-a92fb895decf
 	github.com/fbaube/orderednodes v0.0.0-20260519121740-0972119f7201
 	github.com/fbaube/stringutils v0.0.0-20261104124143-eebd30447f9d
+	github.com/fbaube/treelinks v0.0.0-20261113173923-936ec9c5d6b4
 )
 
 require (
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/fbaube/ctoken v0.0.0-20251106121702-333021124221 // indirect
-	github.com/fbaube/dsmnd v0.0.0-20261101054938-29c6ca544c49 // indirect
+	github.com/fbaube/dsmnd v0.0.0-20261113173103-6353600e4d91 // indirect
 	github.com/fbaube/humanbytes v0.0.0-20250119091546-d58fbfdd444c // indirect
 	github.com/fbaube/logutils v0.0.0-20250316184850-0569e5bc6b6d // indirect
 	github.com/fbaube/miscutils v0.0.0-20260906153813-4168fd33744f // indirect
@@ -22,6 +23,6 @@ require (
 	github.com/mgutz/str v1.2.0 // indirect
 	github.com/nbio/xml v0.0.0-20260302224236-9f64bb3b5a9e // indirect
 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
-	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

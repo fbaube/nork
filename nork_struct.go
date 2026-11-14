@@ -77,8 +77,8 @@ type Nork struct {
 //   UUIDS IN-MEM
 //  creating *Nork 
 // ================
-// Links is by value, not as a pointer.
-   Links TL.Treelinks
+// Links "should be" by value, not as a pointer.
+   Links *TL.Treelinks
 
 // =============
 //  OTHER ITEMS 
