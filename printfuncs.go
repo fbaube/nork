@@ -15,14 +15,14 @@ var printTreeTo, printCssTreeTo io.Writer
 // It does not end the string with (white)space.
 // .
 func (p *Nork) LinePrefixString() string {
-	if p.Links.Level() == 0 || p.Links.Parent() != nil {
+	if p.links.Level() == 0 || p.links.Parent() != nil {
 		// return fmt.Sprintf("[%d]", p.seqID)
 		return "[?!R?!]"
 	} else {
 		// (spaces)[lvl:seq]"
 		// func S.Repeat(s string, count int) string
 		return fmt.Sprintf("%s[%02d]", // "%s[%02d:%02d]", 
-			S.Repeat("  ", p.Links.Level()-1), p.Links.Level()) // ,p.seqID)
+			S.Repeat("  ", p.links.Level()-1), p.links.Level()) // ,p.seqID)
 	}
 }
 

@@ -29,7 +29,7 @@ func (p *Nork) StringserTree(f StringerFunc, w io.Writer) error {
 */
 
 func (p *Nork) FirstKid() TL.Treelinkser {
-      return p.Links.FirstKid()
+      return p.links.FirstKid()
 }
       
 /*

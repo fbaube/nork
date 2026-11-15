@@ -53,7 +53,7 @@ type FSONork struct {
 }
 
 // func (p *FSONork) IsDir()  bool { return p.Nork.IsDir() }
-func (p *FSONork)   IsRoot()  bool { return p.Nork.Links.Parent() == nil }
+func (p *FSONork)   IsRoot()  bool { return p.Nork.links.Parent() == nil }
 func (p *FSONork) IsDirlike() bool { return p.FSO.IsDirlike() }
 
 // ===========================

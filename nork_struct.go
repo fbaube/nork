@@ -11,6 +11,10 @@ import(
 //   func (*Nork) FuncName() string
 type StringFunc func(Norker) string
 
+func (p *Nork) Links() *TL.Treelinks {
+      return p.links
+}
+
 // Nork is an all-weather, all-terrain tree node. 
 //
 // Child nodes ("Kid"s) have an externally-defined 
@@ -78,7 +82,7 @@ type Nork struct {
 //  creating *Nork 
 // ================
 // Links "should be" by value, not as a pointer.
-   Links *TL.Treelinks
+   links *TL.Treelinks
 
 // =============
 //  OTHER ITEMS 
