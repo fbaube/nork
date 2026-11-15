@@ -25,9 +25,6 @@ type Norker interface {
 	// ======================
 	//  PATH CHARACTERISTICS
 	// ======================
-	// Level is zero-based (i.e. root Nork's is 0) 
-	Level() int
-	// SetLevel(int) // should be self-calculated by node 
 	// Root should always return the root
 	//  (at arena index 0, if one is used) 
 	Root() TL.Treelinkser // RootNork
@@ -52,11 +49,6 @@ type Cntyer interface {
 	// AbsFP is abs.filepath for a file/dir.
 	AbsFP() string
 	SetAbsFP(string)
-	// Kids stuff that only makes sense for Kids in a linked list. 
-	SetFirstKid(TL.Treelinkser)
-	SetLastKid (TL.Treelinkser)
-	SetPrevPeer(TL.Treelinkser)
-	SetNextPeer(TL.Treelinkser)
 }
 
 

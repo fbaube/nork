@@ -3,11 +3,11 @@ module github.com/fbaube/nork
 go 1.27.3
 
 require (
-	github.com/fbaube/fileutils v0.0.0-20261113174227-f6eed5922451
+	github.com/fbaube/fileutils v0.0.0-20261114131124-766441edbf44
 	github.com/fbaube/mlog v0.0.0-20260906153105-a92fb895decf
 	github.com/fbaube/orderednodes v0.0.0-20260519121740-0972119f7201
 	github.com/fbaube/stringutils v0.0.0-20261104124143-eebd30447f9d
-	github.com/fbaube/treelinks v0.0.0-20261113173923-936ec9c5d6b4
+	github.com/fbaube/treelinks v0.0.0-20261114220655-991f0892433c
 )
 
 require (

@@ -125,8 +125,6 @@ func (p *Nork) IsRoot() bool { return p.level == 0 }
 func (p *Nork) IsDirlike() bool { return p.IsDirlike() }
 */
 
-func (p *Nork) Level()  int  { return p.level }
-func (p *Nork) SetLevel(i int) { p.level = i }
 func (p *Nork) CreatPath() string { return p.creatPath } 
 
 // ===========================
