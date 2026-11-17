@@ -11,7 +11,9 @@ import(
 //   func (*Nork) FuncName() string
 type StringFunc func(Norker) string
 
-func (p *Nork) Links() *TL.Treelinks {
+// LinksPtr overrides the same-named func of
+// the *Treelinks, aktho it does the same thing. 
+func (p *Nork) LinksPtr() *TL.Treelinks {
       return p.links
 }
 
@@ -79,9 +81,7 @@ type Nork struct {
    uuLinks *TL.Treelinks 
 // ================
 //   UUIDS IN-MEM
-//  creating *Nork 
 // ================
-// Links "should be" by value, not as a pointer.
    links *TL.Treelinks
 
 // =============

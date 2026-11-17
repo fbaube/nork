@@ -48,6 +48,10 @@ github.com/fbaube/treelinks v0.0.0-20261115111047-447ffbc64214 h1:VM0yLLNBTPijay
 github.com/fbaube/treelinks v0.0.0-20261115111047-447ffbc64214/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
 github.com/fbaube/treelinks v0.0.0-20261115212900-ac57fc111338 h1:DTvqabSX1t8xh/5kJd0wA+UGV27z8vmAe1mupXJun80=
 github.com/fbaube/treelinks v0.0.0-20261115212900-ac57fc111338/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
+github.com/fbaube/treelinks v0.0.0-20261116071046-69ca3c747a29 h1:Ky+KDAIP1ZK1YbLCr+TLOElgPmliDKdMQf9yaLLr8rI=
+github.com/fbaube/treelinks v0.0.0-20261116071046-69ca3c747a29/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
+github.com/fbaube/treelinks v0.0.0-20261117112156-bccd3a6b3c6d h1:YmK6R0lztUWTmy0LsFQqvODDPxZPGoTo4eDw5UfYtXY=
+github.com/fbaube/treelinks v0.0.0-20261117112156-bccd3a6b3c6d/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
 github.com/fbaube/wasmutils v0.0.0-20251129222829-80044fd986ff h1:HzGot5LeI+ls9FEXSoGEKF8YnJ+ajVFvgysHI+zPoP0=
 github.com/fbaube/wasmutils v0.0.0-20251129222829-80044fd986ff/go.mod h1:0toxIvnxI8IGqg8bRnvbHiVCWlplqXAlrbGNrmCgtMA=
 github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
