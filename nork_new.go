@@ -4,10 +4,15 @@ import(
 	"errors"
 	"path"
 	"uuid"
+    "fmt"
+    FP "path/filepath"
     TL "github.com/fbaube/treelinks"
 )
 
-// NewNork does NOT assume an FS-type environment, and is fairly simple:
+// NewNork does NOT assume an FS-type environment, and assigns a UUID.
+// UUIDs are cheap, so e don't worry about assigning them to (e.g.) DOM
+// nodes or markup nodes, whihc might actually need them as ToC entries. 
+// NOTE: Interaction with os.Root is TBD!
 //  - It expects a relative path, not absolute; "." and "./" are OK but
 //    not ""; an absolute path does NOT return an error 
 //  - The path need not be in a filesystem, but paths are still expected 
@@ -24,6 +29,9 @@ import(
 //  - There is no distinction between a "tree" Nork and a "lone" Nork 
 // .
 func NewNork(aRelPath string) *Nork {
+    if (FP.IsAbs(aRelPath)) {
+        fmt.Printf("NewNork got ABS not rel: " + aRelPath + "\n")
+        } 
     // Save away the creation-time path 
     var pN = new(Nork{creatPath:aRelPath, Name:path.Base(aRelPath)})
 	if aRelPath == "" {

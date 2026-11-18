@@ -30,6 +30,7 @@ func newFSOnork(s string) *FSONork {
 	return pFN
  }
 
+/*
 // NewFSOTreeNork prefers a relative path. It does not load file 
 // content, which is an expensive operation done elsewhere. But it
 // loads the [Filepaths], which does checks specific to filesystem
@@ -53,6 +54,7 @@ func (pFac *FSOTreeNorkFactory) NewFSOTreeNork(aRelPath string) *FSONork {
 
 	return pFN
 }
+*/
 
 // NewFSOLoneNork prefers a relative path. It does not load file
 // content, which is an expensive operation done elsewhere. But it

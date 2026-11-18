@@ -2,18 +2,18 @@ package nork
 
 import (
 	"io"
-    TL "github.com/fbaube/treelinks"
+     TL "github.com/fbaube/treelinks"
 )
 
 type Norker interface {
-     	TL.Stringser
-        TL.Treelinkser 
+    TL.Stringser
+    TL.Treelinkser 
 	// =====================
 	//  PATHS (Rel. & Abs.) 
 	// =====================
 	// RelPath is rel.filepath for a file/dir, and for a DOM
-	// node, it is meaningless, unless it is a [RootNorker],
-	// for which it is the rel.path to the containing document. 
+	// node, it is meaningless except for a [RootNorker],
+	// where it is the rel.path to the containing document.
 	RelPath() string
 	SetRelPath(string) 
 	// AbsPath is abs.filepath for a file/dir, and for a DOM
@@ -25,9 +25,7 @@ type Norker interface {
 	// ======================
 	//  PATH CHARACTERISTICS
 	// ======================
-	// Root should always return the root
-	//  (at arena index 0, if one is used) 
-	Root() TL.Treelinkser // RootNork
+	Root() TL.Treelinkser 
 	IsRoot() bool
 	IsDir() bool
 	IsDirlike() bool
@@ -37,19 +35,5 @@ type Norker interface {
 	LinePrefixString() string
 	PrintTree(io.Writer) error
 }
-
-// Cntyer is satisfied by [*Cnty] NOT by Cnty.
-type Cntyer interface {
-	// =========================
-	//  FILEPATHS (Rel. & Abs.) 
-	// =========================
-	// RelFP is rel.filepath for a file/dir.
-	RelFP() string
-	SetRelFP(string) 
-	// AbsFP is abs.filepath for a file/dir.
-	AbsFP() string
-	SetAbsFP(string)
-}
-
 
 
