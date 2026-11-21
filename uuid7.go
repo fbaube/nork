@@ -9,6 +9,14 @@ import (
     SU "github.com/fbaube/stringutils"
 )
 
+// NilUUID is an empty UUID, all zeros.
+var NilUUID uuid.UUID 
+// MaxUUID has all 128 bits set to 1.
+var MaxUUID = uuid.UUID{
+		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	}
+    
 // IAW SPEC and stdlib code: 
 // UUIDv7 is defined in RFC 9562 section 5.7 as:
 //
@@ -79,11 +87,24 @@ func StringOfUUID(u *uuid.UUID) string {
 // =================================
 var zeroBytes [16]byte = [16]byte { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
 
+func UUIDisValidKey(u uuid.UUID) error {
+    if u == NilUUID {
+        return errors.New("required UUID is Nil (all zeroes)")
+    }
+    return nil
+}
+func NullableUUIDisSet(u UUIDnullable) bool {
+    return u.IsValid && u.UUID != NilUUID
+}
+func NullableUUIDbytes(u UUIDnullable) []byte {
+    if !u.IsValid {
+        return nil
+    }
+    return u.UUID[:]
+}
+
 func UUIDasBytes(u uuid.UUID) []byte {
-     // copy(dst []byte, src string) int
-     var b []byte
-     copy(b, u[0:16])
-     return b
+     return u[:]
      }
 func UUIDfromBytes(b []byte) (uuid.UUID, error) { 
      var u uuid.UUID 
@@ -97,6 +118,11 @@ func UUIDisZero(u uuid.UUID) bool {
      return u == zeroBytes
      }
 func UUIDasString(u uuid.UUID) string { return "UUIDasString:TBS" }
+
+type UUIDnullable struct {
+    IsValid bool
+    uuid.UUID
+}
 
 // === THE CODE BELOW IS OBSOLETE: IGNORE! ===
 
