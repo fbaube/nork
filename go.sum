@@ -22,6 +22,8 @@ github.com/fbaube/fileutils v0.0.0-20261114131124-766441edbf44 h1:UNcwFkiYNDFvhm
 github.com/fbaube/fileutils v0.0.0-20261114131124-766441edbf44/go.mod h1:4odv6RTURYQaJBX/K7o5dCa3w+aW9sKctKN+GDd9ePU=
 github.com/fbaube/fileutils v0.0.0-20261115093126-97e8e9402ef0 h1:C5iqle9YFK51oTl3hUh7nbbcDnpxecIIiRcsoYQMLdQ=
 github.com/fbaube/fileutils v0.0.0-20261115093126-97e8e9402ef0/go.mod h1:4odv6RTURYQaJBX/K7o5dCa3w+aW9sKctKN+GDd9ePU=
+github.com/fbaube/fileutils v0.0.0-20261118084837-e363fbbe2fb5 h1:WBbA8lVWTOJUYxYQD6YmHTb8UpxJlJdz75qPNwfKEnE=
+github.com/fbaube/fileutils v0.0.0-20261118084837-e363fbbe2fb5/go.mod h1:4odv6RTURYQaJBX/K7o5dCa3w+aW9sKctKN+GDd9ePU=
 github.com/fbaube/humanbytes v0.0.0-20250119091546-d58fbfdd444c h1:k6VDhhlL+FI8nrBAwQDoXyPEKN+MuOtSMaDJfzwnA7E=
 github.com/fbaube/humanbytes v0.0.0-20250119091546-d58fbfdd444c/go.mod h1:WUS3tn4t+FViNsl4VOqYiV51cJNIIeMjLI9fOfm+Ug8=
 github.com/fbaube/logutils v0.0.0-20250316184850-0569e5bc6b6d h1:hH8uBNU6Vasxh9Pf3bzNdA+JFAtckHavpQf+kpmvHC8=
@@ -52,6 +54,8 @@ github.com/fbaube/treelinks v0.0.0-20261116071046-69ca3c747a29 h1:Ky+KDAIP1ZK1Yb
 github.com/fbaube/treelinks v0.0.0-20261116071046-69ca3c747a29/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
 github.com/fbaube/treelinks v0.0.0-20261117112156-bccd3a6b3c6d h1:YmK6R0lztUWTmy0LsFQqvODDPxZPGoTo4eDw5UfYtXY=
 github.com/fbaube/treelinks v0.0.0-20261117112156-bccd3a6b3c6d/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
+github.com/fbaube/treelinks v0.0.0-20261118084911-d73f41b3be04 h1:LAzfdb9sZv6jIHq3gg/1IzqJL6iMIRxMoTdZihYVP+4=
+github.com/fbaube/treelinks v0.0.0-20261118084911-d73f41b3be04/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
 github.com/fbaube/wasmutils v0.0.0-20251129222829-80044fd986ff h1:HzGot5LeI+ls9FEXSoGEKF8YnJ+ajVFvgysHI+zPoP0=
 github.com/fbaube/wasmutils v0.0.0-20251129222829-80044fd986ff/go.mod h1:0toxIvnxI8IGqg8bRnvbHiVCWlplqXAlrbGNrmCgtMA=
 github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=

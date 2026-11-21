@@ -1,5 +1,108 @@
 package nork
 
+import (
+	"encoding/binary"
+	"time"
+    "uuid"
+    "fmt"
+	"errors"
+    SU "github.com/fbaube/stringutils"
+)
+
+// IAW SPEC and stdlib code: 
+// UUIDv7 is defined in RFC 9562 section 5.7 as:
+//
+//  0                   1                   2                   3
+//  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// |                           unix_ts_ms                          |
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// |          unix_ts_ms           |  ver  |       rand_a          |
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// |var|                        rand_b                             |
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// |                            rand_b                             |
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+// How WE do it:
+// NOTE: code to set unix_ts_sub_ms is TBS,
+// so right now the only difference from the spec is using 
+// the last 24 bits of random to store a DB table name. 
+// 
+//   bits 0                   1                   2                   3
+//        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//  bytes +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//  0..3  |                           unix_ts_ms                          |
+//        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//  4..7  |          unix_ts_ms           |  ver  |    unix_ts_sub_ms     |
+//        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//  8..11 |var|                        rand_b                             |
+//        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// 12..15 |    rand_b     |      'T'      |      'B'      |      'L'      |
+//        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+// TableOfUUID returns the 3-letter DB table code.
+// This is non-standard for UUIDs.
+func TableOfUUID(u *uuid.UUID) string {
+     return string(u[13:16])
+}
+
+// SetTable sets the 3-letter DB table code.
+// This	is non-standard for UUIDs. 
+func SetTableOfUUID(u *uuid.UUID, table string) {
+     // copy(dst []byte, src string) int
+     copy(u[13:16], (table+"   ")[0:3])
+}
+
+// String assumes v7, and table name in last three bytes.
+// func (u uuid.UUID) String() string {
+func StringOfUUID(u *uuid.UUID) string {
+     // First convert the ms count to a Unix time.
+     // Shift the elements into place
+     var unix_ts_ms uint64
+     unix_ts_ms = uint64(binary.BigEndian.Uint64(u[:6]) >> 16)
+     // timestamp to YMDHM
+     // sep. ts bits to sthg else
+     // then tbl & rowID
+     var unix_time time.Time
+     unix_time = time.UnixMilli(int64(unix_ts_ms))
+     println(unix_time.String())
+     var ymdhm string
+     ymdhm = SU.TimeAsYMDHM(unix_time)
+     return ymdhm + fmt.Sprintf("-%1x%2x-%c%c%c", // -%4d",
+            u[6]&0xF, u[7], u[13], u[14], u[15]) // , u.RowID())
+}
+
+// =================================
+//  These next func's were proposed
+//  (most as methods) by Perplexity 
+// =================================
+var zeroBytes [16]byte = [16]byte { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+
+func UUIDasBytes(u uuid.UUID) []byte {
+     // copy(dst []byte, src string) int
+     var b []byte
+     copy(b, u[0:16])
+     return b
+     }
+func UUIDfromBytes(b []byte) (uuid.UUID, error) { 
+     var u uuid.UUID 
+     leng := len(b)
+     if leng < 16 { return zeroBytes, errors.New("Short UUID") } 
+     // copy(dst []byte, src string) int
+     copy(u[0:16], b)
+     return u, nil 
+     }
+func UUIDisZero(u uuid.UUID) bool {
+     return u == zeroBytes
+     }
+func UUIDasString(u uuid.UUID) string { return "UUIDasString:TBS" }
+
+// === THE CODE BELOW IS OBSOLETE: IGNORE! ===
+
+/*
+
+// Original coyright notice:
 // Copyright 2026 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
@@ -17,38 +120,10 @@ package nork
 //
 // [RFC 9562]: https://www.rfc-editor.org/rfc/rfc9562.html
 
-// This file also works with SQLite RowIDs. Note 
-// that altho a rowID is officially 64 bits, here
-// it is 30 bits, because we do not expect more
-// than one gigabyte of rows in any table.
+func NewV7() Uuid7 {
 
-// This creates a new UUID by buildig it up field
-// by field. Another way would be to just call the
-// stdlib to create a new one and then set custom
-// fields. But this would drain random unnecessarily.
-// As written hear, a new UUDI uses MUCH less random
-// than the original stdlib version. However that
-// approach can still be taken if problems are
-// encountered with the approach here. 
-
-import (
-	"encoding/binary"
-	"sync"
-	"time"
-    "uuid"
-    "fmt"
-    SU "github.com/fbaube/stringutils"
-    /*
-	"crypto/rand"
-    "bytes"
-    "cmp"
-	"encoding/hex"
-	"errors"
-    */
-)
-
-// A UUID is a Universally Unique Identifier as specified in RFC 9562.
-// UUIDs are comparable, such as with the == operator.
+// A UUID is a Universally Unique Identifier as specified in 
+// RFC 9562. UUIDs are comparable, such as with the == operator.
 // Because a UUID is an array (not a slice), "==" WORKS!
 
 var (
@@ -104,8 +179,6 @@ var (
 // 12..15 |    rand_b     |      'T'      |      'B'      |      'L'      |
 //        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // .
-
-/*
 
 func NewV7() Uuid7 {
 	// UUIDv7 is defined in RFC 9562 section 5.7 as:
@@ -232,45 +305,6 @@ func (u *Uuid7) SetRowID(rowid uint32) {
      binary.BigEndian.PutUint32(u[8:12], rowid)
      u[8] |= variant
 }
-
-*/
-
-// Table
-// func (u *uuid.UUID) Table() string {
-func TableOfUUID(u *uuid.UUID) string {
-     return string(u[13:16])
-}
-
-// SetTable
-// func (u *uuid.UUID) SetTable(table string) {
-func SetTableOfUUID(u *uuid.UUID, table string) {
-     // table += "   "
-     // copy(dst []byte, src string) int
-     copy(u[13:16], (table+"   ")[0:3])
-}
-
-// String assumes v7, and table name in last three bytes.
-// func (u uuid.UUID) String() string {
-func StringOfUUID(u *uuid.UUID) string {
-     // First convert the ms count to a Unix time.
-     // Shift the elements into place
-     var unix_ts_ms uint64
-     unix_ts_ms = uint64(binary.BigEndian.Uint64(u[:6]) >> 16)
-     // timestamp to YMDHM
-     // sep. ts bits to sthg else
-     // then tbl & rowID
-     var unix_time time.Time
-     unix_time = time.UnixMilli(int64(unix_ts_ms))
-     println(unix_time.String())
-     var ymdhm string
-     ymdhm = SU.TimeAsYMDHM(unix_time)
-     return ymdhm + fmt.Sprintf("-%1x%2x-%c%c%c", // -%4d",
-            u[6]&0xF, u[7], u[13], u[14], u[15]) // , u.RowID())
-}
-
-// =========================================================
-
-/*
 
 // Parse returns the UUID represented by s.
 //
