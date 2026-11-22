@@ -40,6 +40,10 @@ github.com/fbaube/stringutils v0.0.0-20260511123541-ab996b555f8d h1:aVchLvgOjt7Z
 github.com/fbaube/stringutils v0.0.0-20260511123541-ab996b555f8d/go.mod h1:prND58zPOTp1HSQ59bQl4w239JV0KNPYQZnNDRu5gjk=
 github.com/fbaube/stringutils v0.0.0-20261104124143-eebd30447f9d h1:G/uKZWTrHHSAQLEkbL86Zo7/07B9zx6yu/oBXPaltz0=
 github.com/fbaube/stringutils v0.0.0-20261104124143-eebd30447f9d/go.mod h1:z+kQKv0VhbApMwwOAWmJ2qC80Ud3PrzX9ESBZ8MNuaQ=
+github.com/fbaube/stringutils v0.0.0-20261122142627-09fac5b3a33a h1:jRPpGZDHQeHOCG3zZCd1KI6xmyQK8AcrTJWhWv6nm2A=
+github.com/fbaube/stringutils v0.0.0-20261122142627-09fac5b3a33a/go.mod h1:vVg5G3xePaRhqumXFTRnbsGuWZZfqgWlUin+R7sQGpA=
+github.com/fbaube/stringutils v0.0.0-20261122143006-48df54fb07e4 h1:jIFtggmyInD3JbKD/PtedkoP5h3wLxjhOsDqOjrAANg=
+github.com/fbaube/stringutils v0.0.0-20261122143006-48df54fb07e4/go.mod h1:vVg5G3xePaRhqumXFTRnbsGuWZZfqgWlUin+R7sQGpA=
 github.com/fbaube/treelinks v0.0.0-20261113173923-936ec9c5d6b4 h1:kKVunsW0G4AfRbxa3y2T1y85D1EWfxtQp5FFnR8WU8w=
 github.com/fbaube/treelinks v0.0.0-20261113173923-936ec9c5d6b4/go.mod h1:rovh5+UtPO+WcznNDCr8h9DEb/5UxGZsv4/yJgTu3y8=
 github.com/fbaube/treelinks v0.0.0-20261114215139-e6dca2146710 h1:ulVwQxuEVXEG3+n7XHMsyaSLGBaUNC1fPXk7pRB9lzI=

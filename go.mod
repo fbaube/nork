@@ -6,7 +6,7 @@ require (
 	github.com/fbaube/fileutils v0.0.0-20261118084837-e363fbbe2fb5
 	github.com/fbaube/mlog v0.0.0-20260906153105-a92fb895decf
 	github.com/fbaube/orderednodes v0.0.0-20260519121740-0972119f7201
-	github.com/fbaube/stringutils v0.0.0-20261104124143-eebd30447f9d
+	github.com/fbaube/stringutils v0.0.0-20261122143006-48df54fb07e4
 	github.com/fbaube/treelinks v0.0.0-20261118084911-d73f41b3be04
 )
 
