@@ -101,6 +101,13 @@ func UUIDhasValidTableName(u uuid.UUID) bool {
     return SU.IsAsciiAlphanum(got) 
 }
 
+func NewTabledUUIDv7(tableName string) uuid.UUID {
+     if len(tableName) != 3 { panic("Bad UUISv7 table name: " + tableName) }
+     u := uuid.NewV7()
+     SetTableNameInUUID(&u, tableName)
+     return u
+}
+
 // Perplexity says: This makes the SQL boundary
 // unambiguous: An unset optional UUID becomes SQL
 // NULL, while a set UUID becomes a 16-byte BLOB.
@@ -110,3 +117,4 @@ func BindNullableUUID(u UUIDnullable) any {
     }
     return u.UUID[:]
 }
+
