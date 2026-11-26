@@ -1,7 +1,7 @@
 package nork
 
 import(
-    "uuid"
+    "github.com/fbaube/oid"
 	FU "github.com/fbaube/fileutils"
 	TL "github.com/fbaube/treelinks"
 )
@@ -46,12 +46,12 @@ type Nork struct {
    Name  string
 // UC is Use Case is QuadraMode UC selector
    UC    string 
-// UUID includes the DB table, so that [OuterOwner]
+// OID includes the DB table, so that [OuterOwner]
 // (the embedding super-struct) can be fetched by 
-// UUID directly from the DB, rather than going 
+// OID directly from the DB, rather than going 
 // thru some kind of in-memory router / map / 
-// UUID registry that figures out which table.
-   UUIDv7 uuid.UUID
+// OID registry that figures out which table.
+   oid.OID
 
 // ==============
 //   BASIC NODE
@@ -74,14 +74,14 @@ type Nork struct {
 // ===============
 //  UUIDS ON-DISK
 // ===============
-// These "uu" (UUID) are behind a pointer because if
-// a tree is IN-MEM and its nodes do not correspond
+// These OID are behind a pointer because if a
+// tree is IN-MEM and its nodes do not correspond
 // to objects ON-DISK, such as nodes in a XML file, 
 // then assigning UUIDs is just wasteful and confusing.
-   uuLinks *TL.Treelinks 
-// ================
-//   UUIDS IN-MEM
-// ================
+   oidLinks *TL.Treelinks 
+// =============
+//  OIDS IN-MEM
+// =============
    links *TL.Treelinks
 
 // =============

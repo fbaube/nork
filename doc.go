@@ -114,15 +114,16 @@
 // (b) it is not feasible to modify this code to define a simpler,
 // more efficient variant of Nork that has unordered kids.
 //
-// # UUID version 7
+// # OID, Based on UUID version 7
 // 
 // UUID (version 7, featuring time ordering) has outsized importance,
 // because it can be used to reference all manner of other DB tables
-// and data structures and external (to the system) targets.
+// and data structures and external (to the system) targets. This is
+// used in package oid in type OID.
 //
 // This could work nicely with the Quadranode concept.
 //
-// A UUID should be absolutely unique within a particular database,
+// A OID should be absolutely unique within a particular database,
 // and quite possible between databases too.
 //
 // Therefore it should be used as the main indexing field for and
@@ -131,14 +132,10 @@
 // It will be necessary to add prefixes to UUIDs to specify (e.g.) 
 // the DB tables of targets.
 //
-// This requires the use of a custom UUID v7 implementation: WIP!
+// This requires the use of a custom UUID v7 implementation, in
+// package oid.
 //
-// The version defined here replaces much of a UUID's random with
-// fields that embed the item's database table name (or short name)
-// and row ID. The former will add great efficienty; the latter may
-// turn out to be unnecessary and unhelpful.
-//
-// When a tree of items is loaded into memory, a UUID is a very
+// When a tree of items is loaded into memory, a OID is a very
 // inefficient way to follow a link between nodes, so instead,
 // there should be pointers to other nodes, which (of course)
 // are session-specific and should not be persisted to database. 
@@ -150,10 +147,9 @@
 // do not expect to see N-to-N situations.)
 //
 // So for these two situations - 1-to-N, and in the future
-// N-to-1 - there can be two database tables "Links1toN" 
-// and later "LinksNto1". And because every UUID7 will
-// contain a table name corresponding to an item type,
-// use cases where the items are a mix of types can
-// simply store them all together. 
+// N-to-1 - there can be two database tables "Links1toN" and
+// later "LinksNto1". And because every OID will contain a
+// table name corresponding to an item type, use cases where
+// the items are a mix of types can simply store them all together. 
 // .
 package nork

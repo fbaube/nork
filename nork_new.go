@@ -3,15 +3,15 @@ package nork
 import(
 	"errors"
 	"path"
-	"uuid"
     "fmt"
     FP "path/filepath"
+	"github.com/fbaube/oid"
     TL "github.com/fbaube/treelinks"
 )
 
-// NewNork does NOT assume an FS-type environment, and assigns a UUID.
-// UUIDs are cheap, so e don't worry about assigning them to (e.g.) DOM
-// nodes or markup nodes, whihc might actually need them as ToC entries. 
+// NewNork does NOT assume an FS-type environment, and assigns an OID.
+// OIDs are cheap, so e don't worry about assigning them to (e.g.) DOM
+// nodes or markup nodes, which might actually need them as ToC entries. 
 // NOTE: Interaction with os.Root is TBD!
 //  - It expects a relative path, not absolute; "." and "./" are OK but
 //    not ""; an absolute path does NOT return an error 
@@ -24,7 +24,7 @@ import(
 //  - It does not attempt to resolve the path to an absolute path:
 //    this capability is not part of the `path` package 
 //  - Its only concept is tree, not filesystem, so it mainly just records
-//    its own node name and acquires a UUID7
+//    its own node name and acquires an OID
 //  - It implements interface [Errer], so errors can be acquired dynamically
 //  - There is no distinction between a "tree" Nork and a "lone" Nork 
 // .
@@ -37,9 +37,9 @@ func NewNork(aRelPath string) *Nork {
 	if aRelPath == "" {
 	   pN.SetError(errors.New("newnork: missing (relative) path"))
 	}
-    pN.uuLinks = new(TL.Treelinks)
-    pN.links   = new(TL.Treelinks)
-    pN.UUIDv7  = uuid.NewV7()
+    pN.oidLinks = new(TL.Treelinks)
+    pN.links = new(TL.Treelinks)
+    pN.OID  = *oid.NewV7("TBS")
     return pN
 }
 
