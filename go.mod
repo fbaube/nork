@@ -3,7 +3,7 @@ module github.com/fbaube/nork
 go 1.27.3
 
 require (
-	github.com/fbaube/fileutils v0.0.0-20261118084837-e363fbbe2fb5
+	github.com/fbaube/fileutils v0.0.0-20261127171130-64e4f44a09ae
 	github.com/fbaube/mlog v0.0.0-20260906153105-a92fb895decf
 	github.com/fbaube/orderednodes v0.0.0-20260519121740-0972119f7201
 	github.com/fbaube/stringutils v0.0.0-20261122143006-48df54fb07e4
@@ -13,7 +13,7 @@ require (
 require (
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/fbaube/ctoken v0.0.0-20251106121702-333021124221 // indirect
-	github.com/fbaube/dsmnd v0.0.0-20261113173103-6353600e4d91 // indirect
+	github.com/fbaube/dsmnd v0.0.0-20261127170939-5dd10c8295e9 // indirect
 	github.com/fbaube/humanbytes v0.0.0-20250119091546-d58fbfdd444c // indirect
 	github.com/fbaube/logutils v0.0.0-20250316184850-0569e5bc6b6d // indirect
 	github.com/fbaube/miscutils v0.0.0-20260906153813-4168fd33744f // indirect

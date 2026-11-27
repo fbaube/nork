@@ -38,8 +38,8 @@ func NewNork(aRelPath string) *Nork {
 	   pN.SetError(errors.New("newnork: missing (relative) path"))
 	}
     pN.oidLinks = new(TL.Treelinks)
-    pN.links = new(TL.Treelinks)
-    pN.OID  = *oid.NewV7("TBS")
+    pN.links  = new(TL.Treelinks)
+    pN.OID   = oid.NewV7("TBS")
     return pN
 }
 
