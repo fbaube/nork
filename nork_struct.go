@@ -17,13 +17,54 @@ func (p *Nork) LinksPtr() *TL.Treelinks {
       return p.links
 }
 
-// Nork is an all-weather, all-terrain tree node. 
+// Nork is an all-weather, all-terrain tree node.
+// It adds kid node prdering on top of [Treelinks],
+// and it provides for multiple sets of Treelinks
+// for support advanced "Quadranode" funtionality
+// like incoming references, attached metadata
+// facets, and versioning. 
 //
 // Child nodes ("Kid"s) have an externally-defined 
-// order, implying that child nodes are not directly 
-// [Comparable] amongst themselves. This specific 
-// specified order of child nodes is essential
-// for representation of content markup.
+// order, implying that child nodes should not be
+// directly compared (via [Comparable]) amongst
+// themselves.
+//
+// The ability to impose a specific specified order
+// on child nodes is essential for representation
+// of content markup.
+//
+// In addition to a basic set of Treelinks, several
+// additional fields are provided, and documented
+// here to make them visible, because many of these
+// fields are not public (i.e. capitalised). 
+//  - Name string: the typical field for a tree node 
+//  - links Treelinks: links built & kept in-memory 
+//  - oidLinks Treelinks: links as persisted
+//  - OID oid.OID: includes the DB table, so that 
+//    [OuterOwner] (the embedding super-struct) can 
+//    be fetched by OID directly from the DB, rather 
+//    than going thru some kind of in-memory router / 
+//    map / OID registry that figures out which table.
+//  - Errer: collection point for errors associated
+//    with this tree node 
+//  - UC string: Use Case, when using as a QuadraMode
+//  - creatPath string: bookkeeping
+//  - IsFocused, IsSelected, IsExpanded, IsVisible,
+//    IsMafked bool: GUI-related stuff 
+//  - level int: this is actually stored with Treelinks,
+//    and is not appropriate here; note that zero marks
+//    a root node; note that we don't also/alternatively
+//    test on whether Prnt is nil, because we might find
+//    other uses for Prnt, such as the file that contains
+//    a document tree.) 
+//    Discussion of level: It is equal to the number of
+//    "/" path separators *separating* path elements (i.e.
+//    not including any leading or trailing separators).
+//    Therefore it is 0 for an XML document root node or
+//    the local root of a file & dir tree (where in both
+//    cases, isRoot() is true and parent() is [probably]
+//    nil)), and it is >0 for others. Reserve negative
+//    numbers for future (ab)use.
 // .
 type Nork struct {
 
@@ -119,7 +160,7 @@ FU.Errer
 // -----------
 //  GUI Stuff
 // -----------
-   IsFocused, IsSelected, IsExpanded, IsVisible bool
+   IsFocused, IsSelected, IsExpanded, IsVisible, IsMarked bool
 }
 
 // NEED ECHO (assume html), INFOS, DEBUG
@@ -131,27 +172,7 @@ func (p *Nork) IsDirlike() bool { return p.IsDirlike() }
 
 func (p *Nork) CreatPath() string { return p.creatPath } 
 
-// ===========================
-//  Abs.Path and Rel.Path are
-//   for: Materialized Paths
-// ===========================
-/*
-// AbsPath is use case -specific, but often an absolute filepath.
-// Discussion: It is the same as rel.path, but expanded to be
-// rooted in - i.e. traced back to the root of - a local file
-// system (or documwnt). For a file or dir in a filesystem,
-// it is rooted at the filesystem root. For a markup node
-// or a map/ToC file, it is rooted at the document start.
-func (p *Nork) AbsPath() string { return p.AbsPath() }
-func (p *Nork) SetAbsPath(s string) { p.SetAbsPath(s) }
-
-// RelPath is use case -specific, but often a relative filepath.
-// Discussion: it is the relative path of this Nork, relative to
-// its tree's root Nork, which is the "local root" shared with
-// other Norks in the same interconnected tree. (That is to say,
-// a local root is the highest/topmost node of a directory tree
-// imported in a single batch.) The last element of the relFP 
-// is this Nork's own name/label, analagous to FP.Base(Path).
-func (p *Nork) RelPath() string { return p.RelPath() }
-func (p *Nork) SetRelPath(s string) { p.SetRelPath(s) }
-*/
+// A Root has a RelPath of "." and can (in principle) be an absFP 
+// that is the rooted absolute path of this root node w.r.t. the
+// external environment (for a file or dir, the file system root;
+// for a markup node, the absolute path of the containing file).
